@@ -1,0 +1,240 @@
+@import "tailwindcss";
+
+/* Class-based dark mode: the shell toggles `.dark` on <html>. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------------------------------------------------------------------------
+   Design tokens
+
+   Semantic tokens are declared as plain CSS variables in :root/.dark so they
+   can change at runtime, then exposed to Tailwind through `@theme inline` —
+   which emits utilities referencing the variable rather than inlining its
+   value at build time.
+
+   Colour here is load-bearing, not decorative: the status ramp encodes
+   covenant compliance state. It is always paired with an icon and a text
+   label so it survives colour-blindness and monochrome printing.
+--------------------------------------------------------------------------- */
+
+@theme inline {
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Surfaces */
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-sunken: var(--surface-sunken);
+
+  /* Text */
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-subtle: var(--ink-subtle);
+  --color-ink-inverse: var(--ink-inverse);
+
+  /* Lines */
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+
+  /* Brand */
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-muted: var(--brand-muted);
+  --color-brand-subtle: var(--brand-subtle);
+  --color-brand-ink: var(--brand-ink);
+
+  /* Covenant status ramp */
+  --color-status-pass: var(--status-pass);
+  --color-status-pass-bg: var(--status-pass-bg);
+  --color-status-pass-line: var(--status-pass-line);
+
+  --color-status-watch: var(--status-watch);
+  --color-status-watch-bg: var(--status-watch-bg);
+  --color-status-watch-line: var(--status-watch-line);
+
+  --color-status-breach: var(--status-breach);
+  --color-status-breach-bg: var(--status-breach-bg);
+  --color-status-breach-line: var(--status-breach-line);
+
+  --color-status-none: var(--status-none);
+  --color-status-none-bg: var(--status-none-bg);
+  --color-status-none-line: var(--status-none-line);
+
+  /* Informational — unverified data, pending review */
+  --color-status-info: var(--status-info);
+  --color-status-info-bg: var(--status-info-bg);
+  --color-status-info-line: var(--status-info-line);
+
+  /* Radii — restrained; this is a data product, not a consumer app */
+  --radius-xs: 3px;
+  --radius-sm: 5px;
+  --radius-md: 7px;
+  --radius-lg: 10px;
+}
+
+:root {
+  --canvas: oklch(0.985 0.002 265);
+  --surface: oklch(1 0 0);
+  --surface-raised: oklch(1 0 0);
+  --surface-sunken: oklch(0.968 0.003 265);
+
+  --ink: oklch(0.23 0.018 265);
+  --ink-muted: oklch(0.47 0.014 265);
+  --ink-subtle: oklch(0.63 0.012 265);
+  --ink-inverse: oklch(0.99 0 0);
+
+  --line: oklch(0.915 0.005 265);
+  --line-strong: oklch(0.86 0.008 265);
+
+  --brand: oklch(0.36 0.115 279);
+  --brand-hover: oklch(0.31 0.115 279);
+  --brand-muted: oklch(0.55 0.1 279);
+  --brand-subtle: oklch(0.955 0.018 279);
+  --brand-ink: oklch(0.99 0 0);
+
+  --status-pass: oklch(0.5 0.115 155);
+  --status-pass-bg: oklch(0.955 0.03 155);
+  --status-pass-line: oklch(0.84 0.06 155);
+
+  --status-watch: oklch(0.55 0.13 72);
+  --status-watch-bg: oklch(0.96 0.04 82);
+  --status-watch-line: oklch(0.85 0.08 82);
+
+  --status-breach: oklch(0.52 0.19 22);
+  --status-breach-bg: oklch(0.958 0.028 22);
+  --status-breach-line: oklch(0.85 0.07 22);
+
+  --status-none: oklch(0.55 0.01 265);
+  --status-none-bg: oklch(0.955 0.003 265);
+  --status-none-line: oklch(0.88 0.005 265);
+
+  --status-info: oklch(0.48 0.11 250);
+  --status-info-bg: oklch(0.955 0.028 250);
+  --status-info-line: oklch(0.85 0.06 250);
+}
+
+.dark {
+  --canvas: oklch(0.165 0.012 265);
+  --surface: oklch(0.205 0.014 265);
+  --surface-raised: oklch(0.235 0.015 265);
+  --surface-sunken: oklch(0.145 0.012 265);
+
+  --ink: oklch(0.955 0.004 265);
+  --ink-muted: oklch(0.72 0.012 265);
+  --ink-subtle: oklch(0.57 0.012 265);
+  --ink-inverse: oklch(0.18 0.015 265);
+
+  --line: oklch(0.29 0.014 265);
+  --line-strong: oklch(0.37 0.016 265);
+
+  --brand: oklch(0.66 0.13 279);
+  --brand-hover: oklch(0.72 0.13 279);
+  --brand-muted: oklch(0.56 0.11 279);
+  --brand-subtle: oklch(0.27 0.045 279);
+  --brand-ink: oklch(0.15 0.02 279);
+
+  --status-pass: oklch(0.75 0.14 155);
+  --status-pass-bg: oklch(0.27 0.05 155);
+  --status-pass-line: oklch(0.38 0.08 155);
+
+  --status-watch: oklch(0.79 0.14 82);
+  --status-watch-bg: oklch(0.29 0.06 72);
+  --status-watch-line: oklch(0.41 0.09 72);
+
+  --status-breach: oklch(0.7 0.17 22);
+  --status-breach-bg: oklch(0.29 0.07 22);
+  --status-breach-line: oklch(0.42 0.11 22);
+
+  --status-none: oklch(0.62 0.01 265);
+  --status-none-bg: oklch(0.26 0.008 265);
+  --status-none-line: oklch(0.35 0.01 265);
+
+  --status-info: oklch(0.72 0.12 250);
+  --status-info-bg: oklch(0.27 0.05 250);
+  --status-info-line: oklch(0.4 0.08 250);
+}
+
+@layer base {
+  * {
+    border-color: var(--line);
+  }
+
+  html {
+    /* Financial UI is denser than consumer web. 15px base keeps body text
+       readable while table text drops to 13px without becoming illegible. */
+    font-size: 15px;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--canvas);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Numbers must align vertically in every column of every table.
+     Lining tabular figures are non-negotiable in financial software. */
+  .tabular,
+  table,
+  input[type="number"],
+  [data-numeric] {
+    font-variant-numeric: tabular-nums lining-nums;
+    font-feature-settings: "tnum" 1, "lnum" 1;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background: var(--brand-subtle);
+    color: var(--ink);
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--line-strong) transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: var(--line-strong);
+    border-radius: 6px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+/* Reports and covenant certificates get printed for investment committees.
+   Chrome the screen needs is noise on paper. */
+@media print {
+  nav[data-shell-nav],
+  header[data-shell-header],
+  .print-hide {
+    display: none !important;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+    font-size: 11px;
+  }
+
+  main {
+    padding: 0 !important;
+  }
+}
