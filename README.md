@@ -75,11 +75,15 @@ caps and carve-outs.
 come from the borrower — audited accounts remain the defence against outright
 fraud. This is a smoke alarm, not a lie detector.
 
-### 5. Show the trend, not just the state
+### 5. Show the trend, then forecast it
 
 Every covenant carries its headroom history. The dashboard sorts worst-first and
 shows direction — a borrower moving +0.80× over four quarters is a different
 conversation from one sitting flat, even when both are technically compliant.
+
+Then the forecast: *at this trajectory, this borrower breaches in about 75 days.*
+A 60–90 day runway is the difference between renegotiating from strength and
+discovering a breach on the deadline.
 
 ### 6. Watch between reporting dates
 
@@ -104,6 +108,62 @@ approves"** — never *"100% automated"*.
 Approval is a distinct permission from editing. Approving a covenant test
 permanently records the approver's name, the exact figures, the definition
 version in force, and every source page cited.
+
+---
+
+## Depth is the moat
+
+The obvious features get QuarterMark into the market. The hard ones are what make
+it difficult to copy — which is the point. If it were easy, anyone could build it.
+
+**Table stakes.** Auto-filing, a red/amber/green dashboard, extraction, alerts,
+an investor report. Necessary to be taken seriously; they differentiate nothing.
+
+**Genuinely useful.** Building the covenant record a fund has never had. Tracking
+amendments and side letters so the rule on screen is always the one currently in
+force, with its full history behind it. Forecasting a breach 60–90 days out from
+the borrower's own trend, rather than reporting it after the fact.
+
+**Hard — where the moat starts.** Two-stage extraction: analyse the document's
+structure first, then reason over each section. Independent recalculation.
+Applying each contract's bespoke definitions correctly across hundreds of
+agreements that share a skeleton and disagree on everything else.
+
+**Very hard — the moat that lasts.**
+
+- **Agentic monitoring.** Specialised agents that hand off to each other — one
+  files, one extracts, one calculates, one watches trends, one watches public
+  records — surfacing a single combined alert: *"this borrower is taking on new
+  debt AND trending toward breach — look now."*
+- **Cross-fund benchmarking.** Anonymised comparison of a borrower against
+  similar companies across every fund on the platform: *"deteriorating faster
+  than 80% of peers."* Impossible without many funds' data, so a competitor with
+  better code still cannot produce it.
+- **A covenant pattern library.** LMA agreements share a skeleton. Every
+  corrected contract teaches the system another pattern, so more of each new
+  agreement arrives already familiar. Patterns are learned; one fund's data is
+  never exposed to another.
+- **Plain-English portfolio questions.** *"If profits fall 10% everywhere, who
+  breaches?"* — answered across the whole book in seconds, not in an afternoon
+  of spreadsheet surgery.
+
+The honest version: the first two tiers are copyable, and on day one there is no
+moat at all. The last two compound, and only with customers. Converting a head
+start into switching costs and a proprietary UK/European dataset is the actual
+work — not the idea, and not the code.
+
+---
+
+## It sits alongside Excel, not against it
+
+Excel is the real incumbent at this end of the market, and asking a fund to
+abandon it on day one is how tools like this die.
+
+QuarterMark imports an existing covenant spreadsheet, can watch a shared sheet
+the fund carries on using, and exports back at any time. That removes the three
+fears that kill adoption — re-entering everything, changing habits, being
+trapped — and leaves the fund to migrate off the spreadsheet by choice, once the
+automation has earned it.
 
 ---
 
