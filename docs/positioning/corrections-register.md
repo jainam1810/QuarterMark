@@ -1,0 +1,125 @@
+# Corrections register
+
+**Claims about QuarterMark that were believed, then disproven.**
+
+This is the most important file in `docs/`. Each entry is a claim that appeared in the
+founding business document or in earlier AI-generated analysis, was repeated as fact, and
+was later shown to be false against a primary source.
+
+They are recorded because the failure mode is *regression*: without this file the pitch
+drifts back to the original wording, and a prospect who spends ten minutes on Google
+punctures it in the meeting.
+
+**Provenance tags used throughout `docs/`:**
+
+| Tag | Meaning |
+|---|---|
+| `[VERIFIED]` | Checked against a primary source. Source and date given. |
+| `[ESTIMATE]` | Modelled or inferred. Not measured. Do not quote externally. |
+| `[ASSERTED]` | Claimed somewhere, never checked. Treat as a hypothesis. |
+| `[FALSE]` | Disproven. Listed below. |
+
+---
+
+## 1. "Nobody else recalculates — everyone just stores what the borrower reports"
+
+**Status: `[FALSE]`** — verified 2026-08-21.
+
+Independent recalculation from source financials, with citations back to the agreement PDF,
+is an established feature of the category rather than a differentiator.
+
+| Product | What it does |
+|---|---|
+| **Aloan** | "Calculates each covenant from the source financials on every cycle, reconciles the bank-calculated value against the borrower compliance certificate, and surfaces exceptions with the math and source pages already attached." |
+| **ExactCov** | Codifies "the exact EBITDA definition — add-backs, run-rate adjustments, caps" from the credit agreement; Citations Logic traces every threshold back to the original PDF. |
+| **Lumonic** (PitchBook / Morningstar) | Ingests agreements and certificates, extracts covenant definitions with AI, tests ratios each period. |
+| **CovenantIQ** | Parses the credit agreement, extracts covenant definitions, builds the monitoring schedule. Holds SOC 2 Type II. |
+| Also in this space | Cardo AI, Moody's Lending Suite, Oxane Partners |
+
+Note this was *already* found by our own research on 2026-08-04 — which reported that AI
+covenant extraction with source traceability was "the single clearest technical trend across
+2025–2026" — and was then contradicted in a later summary. The research was right; the
+summary was wrong.
+
+**Say instead:** segment and price. UK and European funds under ~£500m at £400–1,500/month,
+where the existing tools are US-built or enterprise-priced.
+
+---
+
+## 2. "AIFMD II forces UK funds to buy this"
+
+**Status: `[FALSE]` for UK funds** — verified 2026-08-21.
+
+- AIFMD II (Directive (EU) 2024/927) **does not apply to UK-authorised AIFMs.** Transposition
+  deadline 16 April 2026; the enhanced Article 24 reporting applies only from **16 April 2027**.
+- The UK is moving in the **opposite** direction. FCA **CP26/26 (FRAME)**, published
+  **14 July 2026**, replaces Annex IV reporting and targets a **~75% reduction** in reporting
+  burden. Final rules 2027, effective 2028.
+- FRAME's **£500m NAV threshold** splits "essential" from "enhanced" reporting — **the entire
+  QuarterMark target segment sits in the lighter tier**. "Small AIFM" is defined as NAV below
+  £750m, which is all of them.
+- AIFMD II changes also do not apply to sub-threshold AIFMs, capturing the smaller end of the range.
+
+**Say instead:** LP / investor operational due diligence. Institutional LPs ask how a manager
+monitors covenants; spreadsheet tracking signals operational risk. That applies in every
+jurisdiction. Keep regulatory framing for EU funds only, and never merge the two pitches.
+
+---
+
+## 3. "DORA makes AWS the safe answer"
+
+**Status: `[FALSE]` for UK-only funds** — verified 2026-08-21.
+
+The underlying fact is true: the ESAs published the first list of critical ICT third-party
+providers on **18 November 2025**, naming 19 providers including AWS, Microsoft, Google Cloud,
+Oracle and SAP, now under direct ESA oversight.
+
+But **DORA is EU regulation.** For a UK AIFM the relevant regime is the FCA / Bank of England
+critical third parties rules. Good line for an EU fund; largely irrelevant to a UK one.
+
+This was the **second** argument built on EU rules for a GBP-priced UK product. The UK/EU
+conflation is the recurring failure mode — check jurisdiction before using any regulatory argument.
+
+---
+
+## 4. "We are one-tenth the price of the competition"
+
+**Status: `[FALSE]` as a general claim** — verified 2026-08-21. True only against Allvue/eFront.
+
+ExactCov publishes **$1,050/month** (~£830) billed annually, in GBP, EUR or USD. That is level
+with the planned £900 tier, not ten times it. See `competitive-landscape.md`.
+
+---
+
+## 5. "Everyone hides pricing behind a sales call"
+
+**Status: `[FALSE]`** — verified 2026-08-21. ExactCov publishes list pricing and runs a 7-day
+free trial. Published pricing is no longer unusual in this category.
+
+---
+
+## 6. "Watch public filings daily" (as implying fresh financials)
+
+**Status: overstated.** UK private companies file accounts **annually**, often abridged and up
+to nine months late. Daily monitoring delivers **events** — new charges registered, director
+resignations, accounts overdue, insolvency notices — not current numbers. Still valuable;
+describe it accurately. The README already states this correctly.
+
+---
+
+## 7. "Recalculation catches borrowers massaging their numbers"
+
+**Status: needs precision.** It catches **misapplication of the contract's own definitions**
+(the add-back example). It does **not** catch misstated underlying figures — the raw financials
+still come from the borrower. Say the first; never imply the second. A fund CFO will puncture it.
+
+The README already frames this correctly: *"a smoke alarm, not a lie detector."*
+
+---
+
+## 8. "£15/month to serve, break-even at 2 customers"
+
+**Status: `[ESTIMATE]`, infrastructure only.** Excludes professional indemnity insurance
+(essential for a product making breach determinations), SOC 2 (becoming table stakes —
+CovenantIQ already holds Type II), and human onboarding time per fund. Break-even at two
+customers holds only if the founder's time is free.
