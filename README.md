@@ -175,12 +175,12 @@ adding one is additive rather than invasive.
 
 | Module | Status | What it does |
 |---|---|---|
-| **Dashboard** | Live | Loan book at a glance; what needs attention today |
-| **Portfolio** | Live | Borrowers, facilities, loan structure |
-| **Covenants** | Live | Terms, recalculation, headroom trends, breach forecasting |
-| **Documents** | Live | Auto-filing, AI extraction with page-level provenance |
-| **Early warning** | Live | Daily public-record monitoring between reporting dates |
-| **Reporting** | Live | Regulatory and investor reporting |
+| **Dashboard** | Designed | Loan book at a glance; what needs attention today |
+| **Portfolio** | Designed | Borrowers, facilities, loan structure |
+| **Covenants** | Designed | Terms, recalculation, headroom trends, breach forecasting |
+| **Documents** | Designed | Auto-filing, AI extraction with page-level provenance |
+| **Early warning** | Designed | Daily public-record monitoring between reporting dates |
+| **Reporting** | Designed | Regulatory and investor reporting |
 | **Valuation** | Planned | Mark each position and evidence the mark |
 | **Servicing** | Planned | Payment schedules, interest, drawdowns |
 | **Underwriting** | Planned | Assess new loans with the same extraction engine |
