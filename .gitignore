@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Skill render pipeline (108MB of Python venv — recreate with `uv sync`)
+.claude/skills/*/references/.venv/
+
+# graphify output (regenerate with /graphify)
+graphify-out/
