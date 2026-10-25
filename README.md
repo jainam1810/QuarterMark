@@ -135,10 +135,20 @@ agreements that share a skeleton and disagree on everything else.
   files, one extracts, one calculates, one watches trends, one watches public
   records — surfacing a single combined alert: *"this borrower is taking on new
   debt AND trending toward breach — look now."*
-- **Cross-fund benchmarking.** Anonymised comparison of a borrower against
-  similar companies across every fund on the platform: *"deteriorating faster
-  than 80% of peers."* Impossible without many funds' data, so a competitor with
-  better code still cannot produce it.
+- **Industry comparison, and the add-back gap.** Is this borrower struggling, or
+  is its whole industry? We answer that from **public UK data** — Companies
+  House accounts and Insolvency Service figures for every company in the same
+  trade — so it needs nobody's permission and no other fund's data.
+
+  The comparison itself is ordinary; **the gap underneath it is not.** A
+  borrower's covenant EBITDA is a negotiated figure with add-backs. The sector
+  figure, taken from filed accounts, has none. Compare the two and you can see
+  how hard a borrower is leaning on its add-backs — S&P found that leverage is
+  understated by a median of **2.3 turns** after a year, and that heavier
+  add-backs predict credit deterioration. A borrower can pass its covenant
+  while being more leveraged than its sector *and* adjusting harder than
+  normal. That takes the extraction engine to see, which is why it is here and
+  not in the easy tier.
 - **A covenant pattern library.** LMA agreements share a skeleton. Every
   corrected contract teaches the system another pattern, so more of each new
   agreement arrives already familiar. Patterns are learned; one fund's data is
