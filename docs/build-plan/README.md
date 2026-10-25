@@ -10,7 +10,7 @@ plan itself had never been saved — only the individual phase assessments.
 | 0 | Make TDD possible | ✅ Green | `phase-0-foundations.md` |
 | 1 | Covenant engine 🔴 *the moat* | ✅ Green | `phase-1-covenant-engine.md` |
 | 2 | Extraction spike 🔬 *a measurement* | ✅ Green, lower ceiling | `phase-2-extraction-spike.md` |
-| 3 | Data layer 🔒 | ⬜ **not checked** | — |
+| 3 | Data layer 🔒 | 🟡 Green, one silent-failure trap | `phase-3-data-layer.md` |
 | 4 | Document pipeline | ⬜ **not checked** | — |
 | 5 | Dashboard ✨ *first demoable* | ⬜ **not checked** | — |
 | 6 | Companies House early warning 🎯 | ✅ Green | `phase-6-early-warning.md` |
