@@ -10,7 +10,7 @@ borrower's own financial statements, and warns the fund before a borrower breach
 ## The problem
 
 A private credit fund lends, say, £300m across 50 companies. Every loan carries
-rules — *"debt must stay under 4× profit"*, *"interest cover must exceed 3×"* —
+rules - *"debt must stay under 4× profit"*, *"interest cover must exceed 3×"* -
 buried inside 200-page legal agreements.
 
 Every quarter the fund has to check all of them. At smaller funds this is done by
@@ -24,7 +24,7 @@ hand, in Excel:
 | **Borrowers mark their own homework.** Tired analysts accept the borrower's reported ratio instead of recalculating it. | The party who benefits from "all good" is the one being trusted. |
 
 A missed breach is expensive. Waiving one typically costs the borrower a fee of a
-quarter to a half percent of the loan, plus legal costs — and an awkward
+quarter to a half percent of the loan, plus legal costs - and an awkward
 conversation with the fund's own investors.
 
 ---
@@ -34,10 +34,10 @@ conversation with the fund's own investors.
 The division of responsibility never changes:
 **the fund owns the rules, the borrower owns the numbers, QuarterMark checks one against the other.**
 
-### 1. Set up the loan — once
+### 1. Set up the loan - once
 
 The fund uploads the credit agreement. AI extracts every covenant, every limit,
-every test date, and — critically — the agreement's own **definitions** (what
+every test date, and - critically - the agreement's own **definitions** (what
 exactly counts as "EBITDA" in *this* contract). An analyst reviews and approves.
 
 Most small funds have never had their covenants organised in one structured
@@ -49,21 +49,21 @@ The fund connects the mailbox or drive where borrowers send their reporting pack
 QuarterMark reads each document, recognises what it is and who it belongs to, and
 files it against the right facility.
 
-### 3. Extract the numbers — with provenance
+### 3. Extract the numbers - with provenance
 
-QuarterMark pulls the raw figures out of the borrower's accounts — debt, cash,
-operating profit, depreciation, adjustments — and shows **the page each number
+QuarterMark pulls the raw figures out of the borrower's accounts - debt, cash,
+operating profit, depreciation, adjustments - and shows **the page each number
 came from**. Every figure is traceable back to the source document.
 
-### 4. Recalculate independently — the core of the product
+### 4. Recalculate independently - the core of the product
 
 QuarterMark does not accept the ratio the borrower reported. It recalculates it
 from the raw financials, applying that contract's exact definition, including
 caps and carve-outs.
 
 > **Worked example.** A borrower reports net leverage of **3.90×** against a
-> 4.50× limit — comfortably compliant. Recalculating from the audited accounts
-> gives **4.62×** — a breach.
+> 4.50× limit - comfortably compliant. Recalculating from the audited accounts
+> gives **4.62×** - a breach.
 >
 > The gap is £2.44m of EBITDA add-backs the agreement doesn't permit:
 > £1.35m of exceptional items above the contract's £500k annual cap, and £1.09m
@@ -72,13 +72,13 @@ caps and carve-outs.
 
 **What this catches:** misapplication of the contract's own definitions.
 **What it does not catch:** falsified underlying figures. The raw numbers still
-come from the borrower — audited accounts remain the defence against outright
+come from the borrower - audited accounts remain the defence against outright
 fraud. This is a smoke alarm, not a lie detector.
 
 ### 5. Show the trend, then forecast it
 
 Every covenant carries its headroom history. The dashboard sorts worst-first and
-shows direction — a borrower moving +0.80× over four quarters is a different
+shows direction - a borrower moving +0.80× over four quarters is a different
 conversation from one sitting flat, even when both are technically compliant.
 
 Then the forecast: *at this trajectory, this borrower breaches in about 75 days.*
@@ -87,15 +87,15 @@ discovering a breach on the deadline.
 
 ### 6. Watch between reporting dates
 
-Company filings are monitored daily. Not for fresh financials — private companies
-file accounts annually, often abridged and late — but for **events**: a new charge
+Company filings are monitored daily. Not for fresh financials - private companies
+file accounts annually, often abridged and late - but for **events**: a new charge
 registered, a director resignation, accounts overdue, insolvency notices.
 These surface within days instead of at the next quarterly pack.
 
 ### 7. Report
 
 Regulatory and investor reports assemble from data already verified, with the
-full approval history attached — who approved which figure, when, against which
+full approval history attached - who approved which figure, when, against which
 version of the definition.
 
 ---
@@ -103,7 +103,7 @@ version of the definition.
 ## Nothing is final until a human approves it
 
 The standing promise is **"we automate most, track everything, and a human
-approves"** — never *"100% automated"*.
+approves"** - never *"100% automated"*.
 
 Approval is a distinct permission from editing. Approving a covenant test
 permanently records the approver's name, the exact figures, the definition
@@ -114,7 +114,7 @@ version in force, and every source page cited.
 ## Depth is the moat
 
 The obvious features get QuarterMark into the market. The hard ones are what make
-it difficult to copy — which is the point. If it were easy, anyone could build it.
+it difficult to copy - which is the point. If it were easy, anyone could build it.
 
 **Table stakes.** Auto-filing, a red/amber/green dashboard, extraction, alerts,
 an investor report. Necessary to be taken seriously; they differentiate nothing.
@@ -124,26 +124,26 @@ amendments and side letters so the rule on screen is always the one currently in
 force, with its full history behind it. Forecasting a breach 60–90 days out from
 the borrower's own trend, rather than reporting it after the fact.
 
-**Hard — where the moat starts.** Two-stage extraction: analyse the document's
+**Hard - where the moat starts.** Two-stage extraction: analyse the document's
 structure first, then reason over each section. Independent recalculation.
 Applying each contract's bespoke definitions correctly across hundreds of
 agreements that share a skeleton and disagree on everything else.
 
-**Very hard — the moat that lasts.**
+**Very hard - the moat that lasts.**
 
-- **Agentic monitoring.** Specialised agents that hand off to each other — one
+- **Agentic monitoring.** Specialised agents that hand off to each other - one
   files, one extracts, one calculates, one watches trends, one watches public
-  records — surfacing a single combined alert: *"this borrower is taking on new
-  debt AND trending toward breach — look now."*
+  records - surfacing a single combined alert: *"this borrower is taking on new
+  debt AND trending toward breach - look now."*
 - **Industry comparison, and the add-back gap.** Is this borrower struggling, or
-  is its whole industry? We answer that from **public UK data** — Companies
+  is its whole industry? We answer that from **public UK data** - Companies
   House accounts and Insolvency Service figures for every company in the same
-  trade — so it needs nobody's permission and no other fund's data.
+  trade - so it needs nobody's permission and no other fund's data.
 
   The comparison itself is ordinary; **the gap underneath it is not.** A
   borrower's covenant EBITDA is a negotiated figure with add-backs. The sector
   figure, taken from filed accounts, has none. Compare the two and you can see
-  how hard a borrower is leaning on its add-backs — S&P found that leverage is
+  how hard a borrower is leaning on its add-backs - S&P found that leverage is
   understated by a median of **2.3 turns** after a year, and that heavier
   add-backs predict credit deterioration. A borrower can pass its covenant
   while being more leveraged than its sector *and* adjusting harder than
@@ -154,13 +154,13 @@ agreements that share a skeleton and disagree on everything else.
   agreement arrives already familiar. Patterns are learned; one fund's data is
   never exposed to another.
 - **Plain-English portfolio questions.** *"If profits fall 10% everywhere, who
-  breaches?"* — answered across the whole book in seconds, not in an afternoon
+  breaches?"* - answered across the whole book in seconds, not in an afternoon
   of spreadsheet surgery.
 
 The honest version: the first two tiers are copyable, and on day one there is no
 moat at all. The last two compound, and only with customers. Converting a head
 start into switching costs and a proprietary UK/European dataset is the actual
-work — not the idea, and not the code.
+work - not the idea, and not the code.
 
 ---
 
@@ -171,8 +171,8 @@ abandon it on day one is how tools like this die.
 
 QuarterMark imports an existing covenant spreadsheet, can watch a shared sheet
 the fund carries on using, and exports back at any time. That removes the three
-fears that kill adoption — re-entering everything, changing habits, being
-trapped — and leaves the fund to migrate off the spreadsheet by choice, once the
+fears that kill adoption - re-entering everything, changing habits, being
+trapped - and leaves the fund to migrate off the spreadsheet by choice, once the
 automation has earned it.
 
 ---
@@ -196,22 +196,22 @@ adding one is additive rather than invasive.
 | **Underwriting** | Planned | Assess new loans with the same extraction engine |
 | **Fund accounting** | Planned | Capital accounts, allocations, NAV |
 
-Planned modules are shown rather than hidden — a fund choosing a platform is
+Planned modules are shown rather than hidden - a fund choosing a platform is
 buying a roadmap as well as a product.
 
 ---
 
 ## Who it's for
 
-Small and mid-sized private credit funds — roughly £50m to £500m, 15 to 80 loans
-— in the UK and Europe. Large enough to have a real covenant problem, too small
+Small and mid-sized private credit funds - roughly £50m to £500m, 15 to 80 loans
+- in the UK and Europe. Large enough to have a real covenant problem, too small
 for the enterprise suites built for billion-pound managers.
 
 Three people inside the fund feel three different pains:
 
-- **The analyst** — the two-week manual grind each quarter
-- **The portfolio manager** — being blindsided by a borrower in trouble
-- **The COO** — proving to investors and the regulator that the fund monitors properly
+- **The analyst** - the two-week manual grind each quarter
+- **The portfolio manager** - being blindsided by a borrower in trouble
+- **The COO** - proving to investors and the regulator that the fund monitors properly
 
 ---
 
@@ -229,12 +229,12 @@ Chosen so the platform can move between clouds without a rewrite.
 | Hosting | UK region; portable to AWS or Azure |
 
 Every component is an open standard. Postgres is Postgres anywhere, Node.js runs
-anywhere, and file storage sits behind one adapter — so moving to a client's
+anywhere, and file storage sits behind one adapter - so moving to a client's
 preferred cloud is a deployment change, not a rebuild.
 
 **Design.** White and black with a restrained purple accent, in light and dark.
 Two typefaces: Newsreader for display, Schibsted Grotesk for interface and
-figures. Colour is reserved for meaning — compliance status is always carried by
+figures. Colour is reserved for meaning - compliance status is always carried by
 an icon and a label as well, so it survives colour-blindness and monochrome
 printing.
 
