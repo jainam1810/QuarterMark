@@ -93,23 +93,19 @@ alter table covenant_definition_version
   exclude using gist (covenant_id with =, validity with &&);
 ```
 
-`btree_gist` is a **standard contrib extension**, not a vendor feature — but
-managed Postgres hosts each publish their own allow-list, and some restrict
-`create extension`.
+**Checked 2026-10-25 — available on both candidate hosts**, so it does not
+constrain the Phase 3 choice:
 
-**This is therefore a host-selection criterion, not an afterthought:** any
-candidate that does not permit `btree_gist` is disqualified, because the
-alternative is enforcing non-overlap in application code, which is a race
-condition waiting to happen.
+| Host | `btree_gist` | Source |
+|---|---|---|
+| Azure Database for PostgreSQL Flexible Server | ✅ v1.5–1.8, PG 11–18 | Microsoft Learn |
+| AWS RDS / Aurora PostgreSQL | ✅ v1.8 on PG 18 | AWS RDS extension tables |
 
-Per the README the host is deliberately unchosen — *"UK region; portable to AWS
-or Azure"* — so this gets checked against whichever host is selected in Phase 3.
-Phase 1 touches no database.
+Without it, non-overlap of covenant definition versions would have to be
+enforced in application code — a race condition. It was a potential
+disqualifier; it is not one. See `../decisions/0002-hosting-and-costs.md`.
 
-⚠️ **Repo inconsistency to resolve:** `README.md` names no database vendor,
-while `docs/decisions/0002-hosting-and-costs.md` commits to Supabase London.
-One of them is out of date. The README is the outward-facing file, so it wins
-until Jainam says otherwise.
+Phase 1 touches no database at all.
 
 ## What Phase 1 delivers
 

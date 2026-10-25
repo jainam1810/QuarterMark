@@ -1,53 +1,87 @@
-# 0002 — Hosting and cost model
+# 0002 — Hosting
 
-**Decided** 2026-08-21 · **Status** Accepted
+**Decided** 2026-08-21 · **Revised** 2026-10-25 · **Status** Accepted
 
-## Staged plan
+> **Revision note.** The original version of this ADR committed to Supabase
+> (AWS London) for the pilot. That is **superseded**: the host will be **AWS or
+> Azure**, matching `README.md`, which states *"UK region; portable to AWS or
+> Azure"* and names no vendor.
 
-| Stage | Setup | Cost | Trigger to move on |
-|---|---|---|---|
-| **Pilot / build** | Supabase free tier, **AWS London (eu-west-2)** | £0 | — |
-| **First paying clients** | Vercel Pro + Supabase Pro | ~£37/mo | Before selling to anyone |
-| **First real DDQ** | Supabase **Team** | +$599/mo | Only if the DDQ demands the gated SOC 2 report |
-| **Enterprise client** | Own AWS account (RDS + S3, eu-west-2) | Paid for by that contract | Single-tenancy demanded |
+## Decision
 
-## Verified facts
+**AWS or Azure, UK region.** The choice between the two is deliberately deferred
+to Phase 3, when the schema exists and the trade-off is concrete rather than
+theoretical.
 
-`[VERIFIED 2026-08-21, supabase.com/pricing + /security]`
-Free $0 (500 MB) · Pro $25/mo (8 GB, London region) · Team $599/mo.
-SOC 2 Type 2, ISO 27001, HIPAA, GDPR DPA available.
-**The SOC 2 Type 2 report is gated** — "Enterprise and Team customers can access our SOC 2
-Type 2 report on the dashboard." Point-in-Time Recovery is **$100/mo per 7 days retention**.
+| | AWS | Azure |
+|---|---|---|
+| Postgres | RDS / Aurora PostgreSQL | Azure Database for PostgreSQL Flexible Server |
+| UK region | eu-west-2 (London) | UK South (London) |
+| Object storage | S3 | Blob Storage |
+| Claude | Bedrock | Microsoft Foundry |
 
-`[VERIFIED 2026-08-21, vercel.com/pricing + /security]`
-Hobby $0 but **explicitly non-commercial** — "Our Hobby plan is for personal, non-commercial
-use." Pro $20/mo, not per-seat. Vercel holds SOC 2 Type 2, ISO 27001, PCI DSS, GDPR with DPA.
-Caveat: *"No data is stored permanently inside EU regions"* — but Vercel holds no customer
-data here; Supabase (London) does, and Pro can pin compute to London.
+Both satisfy the README's portability rule, because what we deploy is standard
+Node.js, standard Postgres, and object storage behind one adapter interface.
 
-`[VERIFIED 2026-08-21, anthropic.com/legal/commercial-terms]`
-**"Anthropic may not train models on Customer Content from Services."** This is the **standard**
-commercial term — no enterprise agreement needed. Do not pay extra for a guarantee already held.
+## Selection criteria
 
-`[ESTIMATE]` Claude cost ~£1 per credit agreement, 10–25p per quarterly pack. Modelled from
-published per-token pricing, not measured. Production extraction (multiple passes, verification)
-runs higher. Re-measure against real documents before quoting.
+**1. `btree_gist` — checked, and it does not discriminate.**
 
-## Deliberately deferred
+Bitemporal covenant versioning needs an exclusion constraint preventing
+overlapping validity ranges, which requires the `btree_gist` contrib extension:
 
-- **Supabase Team ($599/mo).** Do not pre-pay. Many DDQs only ask whether subprocessors *are*
-  certified — answerable free from Supabase's public trust page. Wait for a real DDQ, read what
-  it demands, upgrade same-day if required.
-- **Point-in-Time Recovery ($100/mo).** Pro includes daily backups. Add when a fund asks.
-- **Own AWS account.** See 0001 — the free credits self-destruct after 6 months.
+```sql
+create extension if not exists btree_gist;
+alter table covenant_definition_version
+  add constraint no_overlapping_validity
+  exclude using gist (covenant_id with =, validity with &&);
+```
 
-## Known limitations accepted
+Without it, non-overlap has to be enforced in application code — a race
+condition. So it was a potential disqualifier. It is not:
 
-**CLOUD Act / sovereignty.** Supabase is a US company; an EU region solves residency but not
-sovereignty, which some EU buyers raise. Mitigation is the migration path, not a different
-pilot choice — it is vanilla Postgres on AWS, so moving to RDS in our own account is
-lift-and-shift.
+| Host | `btree_gist` | Source |
+|---|---|---|
+| **Azure Flexible Server** | ✅ v1.5–1.8, PG 11–18, no `shared_preload_libraries` needed | `[VERIFIED]` Microsoft Learn extensions-by-name list |
+| **AWS RDS / Aurora** | ✅ v1.8 on PG 18 (v1.9 on PG 19 beta) | `[VERIFIED]` AWS RDS PostgreSQL extension version tables |
 
-**Cost model is infrastructure-only.** Excludes professional indemnity insurance, SOC 2
-certification (£10–18k when demanded), and founder onboarding time. See
-`../positioning/corrections-register.md` §8.
+Also noted: Azure offers `temporal_tables` 1.2.2 (PG 13–18). Likely unused — we
+will model bitemporality explicitly rather than depend on an extension — but
+worth knowing it exists.
+
+**2. Remaining criteria for Phase 3**
+- UK data residency, and a DPA
+- SOC 2 / ISO 27001 for the fund DDQ answer
+- Managed backups with point-in-time recovery
+- Cost at 0, 5 and 30 customers
+- Which one a first enterprise client already uses — **this may decide it for us**
+
+## Cost note
+
+`[VERIFIED 2026-08-21, aws.amazon.com/free]` The AWS free plan gives $100
+immediately, up to $200 total, and **"the account closes on its own 6 months
+after you open it or when your credits run out, whichever comes first."**
+
+So the account is deliberately **not opened during the build**. Opening it early
+burns the window at zero customers and leaves nothing for the migration it is
+meant to fund. Azure's equivalent terms are **not yet verified** — check before
+opening either.
+
+## Still true from the original ADR
+
+- **No cloud-specific code.** Standard Node, standard Postgres, plain SQL, Claude
+  reachable via Anthropic API / Bedrock / Foundry, storage behind one adapter.
+  See `0001-tech-stack.md`.
+- **Defer paid tiers.** Buy SOC 2 reports, PITR and enterprise support when a
+  real DDQ asks, not before.
+- `[VERIFIED]` Anthropic's standard commercial terms already state
+  *"Anthropic may not train models on Customer Content from Services"* — no
+  enterprise agreement needed for that guarantee.
+- `[ESTIMATE]` Claude extraction ~£1 per credit agreement, 10–25p per quarterly
+  pack. Modelled from published token pricing, **not measured**. Phase 2 measures it.
+
+## Consequence
+
+Nothing in Phases 0–2 depends on this choice. The engine is pure logic and the
+extraction spike needs no database. The decision is made in Phase 3 with real
+constraints in hand.
