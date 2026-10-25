@@ -132,3 +132,66 @@ compliance certificate, what actually arrives — a signed PDF, a spreadsheet, o
 both? And which one do you work from?"*
 
 **Do not assume either way.** See `positioning/customer-discovery.md`.
+
+
+---
+
+## Q1 — CLOSED 2026-10-25 (Jainam's call), and replaced
+
+**Was:** *"Why did the earlier competitor — with a dashboard and a daily digest
+— fail?"* I had flagged it as the most important open question.
+
+**Jainam's decision:** drop it. His reasoning, verbatim:
+
+> "Will funds pay — yes of course, there are plenty of competitors, means
+> market is real."
+
+**He is substantially right, and I was over-hedging.** Competitor existence is
+stronger evidence than most startups ever have:
+
+| Evidence | Source |
+|---|---|
+| Allvue — 500+ clients, $8.5tn tracked | `competitive-landscape.md` |
+| ExactCov — publishes **$1,050/mo** pricing | `corrections-register.md` §? |
+| Lumonic — acquired by Morningstar, reports tripling ARR, zero churn | `../research/technical-research.md:441` |
+| CovenantIQ — holds SOC 2 Type II | `corrections-register.md` §8 |
+| Cardo AI, Oxane, Ellis AI ($10m seed, July 2026) | `../research/technical-research.md:627` |
+
+Funded entrants, published prices, an acquisition, and a new $10m seed. **The
+category is real and people pay for it.** Most founders build into a void; this
+is the opposite problem.
+
+**Two further reasons the question lost its value:**
+
+1. **The feasibility work answered it by other means.** The plausible failure
+   modes are now documented independently: the extraction accuracy ceiling
+   (`../build-plan/phase-2-extraction-spike.md`), funds refusing workflow change,
+   and trust preceding features (`customer-discovery.md`).
+2. **It may be unanswerable.** Failed-startup post-mortems are rarely published
+   and founders of dead companies often do not reply.
+
+### ⚠️ What the argument does *not* establish
+
+"Competitors exist" proves **demand exists**. It does not prove **a new entrant
+wins**, and in a crowded market the risk simply moves:
+
+> The question is no longer *"will anyone pay?"* — it is **"why us instead of
+> Lumonic?"**
+
+## Q1b (replaces Q1) — Why would a fund choose us over Lumonic or ExactCov?
+
+**This is answerable, actionable, and it is now the real risk.**
+
+Current candidate answers, and their status:
+
+| Claim | Status |
+|---|---|
+| UK/European document depth (LMA drafting, Companies House, GBP/EUR) | `[ASSERTED]` — load-bearing and still unproven |
+| Companies House registry monitoring | `[VERIFIED]` no competitor advertises it |
+| Showing what we **could not** extract | **New** — `../decisions/0005-verification-model.md` |
+| Statutory-vs-covenant EBITDA gap as an add-back signal | **New** — `../build-plan/phase-8-industry-benchmarking.md` |
+| Founder-level support | Structural, not defensible long-term |
+| Price | `[FALSE]` against ExactCov — `corrections-register.md` |
+
+**Ask on the next fund call:** *"You already look at X. What would make you
+switch, and what would stop you?"*
