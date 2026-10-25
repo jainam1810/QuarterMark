@@ -128,6 +128,13 @@ into a pass. See `phase-8-industry-benchmarking.md`.
                │
                ▼
            "grocery insolvencies up 40% this quarter"
+
+  NEWS     The Gazette (winding-up petitions, naming the borrower)
+           + company-name matches + sector tone
+               │
+               ▼
+           shown with WHY it matched - never an invented impact score
+           see phase-9-news-monitoring.md
 ```
 
 Neither needs the borrower to send anything. See `phase-6-early-warning.md`.
@@ -164,6 +171,7 @@ produces it.
 | Storage affordable | ✅ verified — pennies |
 | **Enough companies per sector with clean figures** | ❓ **unmeasured** |
 | **Add-back extraction accurate enough** | ❓ **Phase 2 measures it** |
+| **Do analysts actually want a news feed?** | ❓ **unasked — neither discovery call raised it** |
 
 Both unknowns are cheap to settle and both are measured before anything is
 promised to a customer.
