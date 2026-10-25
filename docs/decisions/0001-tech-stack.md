@@ -216,3 +216,76 @@ requirement to integrate deeply with a Microsoft ERP. Neither is on the
 horizon.
 
 **Sources:** [Allvue fund accounting](https://www.allvuesystems.com/solutions/fund-accounting) (Dynamics NAV, on their own site) · Allvue job listings via Indeed and ZipRecruiter (no .NET/C# requirement found) · `phase-2-extraction-spike.md`
+
+
+## Addendum 2026-10-25 (2) — reviewing a generic "covenant monitoring stack" blueprint
+
+Jainam raised a second AI-generated stack, this one specific to covenant
+monitoring. **Better than the Allvue summary — it independently converged on
+several of our decisions — but it contains three errors that would be expensive,
+and it exposed two genuine gaps.**
+
+### Where it independently agrees with us — useful validation
+
+| Its recommendation | Our decision |
+|---|---|
+| "Custom JSON-based DSL... rather than hardcoding hard-to-change math" | **Phase 1: closed JSON AST, never evaluated as code** |
+| PostgreSQL for the relational core | ADR 0001 |
+| Next.js + TypeScript frontend | ADR 0001 |
+| S3-compatible object storage | ADR 0001 |
+| SOC 2 Type II, RBAC | `../positioning/corrections-register.md` §8, `permissions.ts` |
+| Zero-retention agreements / Bedrock private endpoints | ADR 0002 |
+
+**Four independent sources have now landed on "JSON AST, not hardcoded
+formulas"** — three architecture designs plus this. Strong convergence on the
+Phase 1 core.
+
+### 🔴 Three errors
+
+**1. "Vector database for RAG & citation tracking" — wrong tool for citation.**
+A vector database retrieves *semantically similar chunks*. It does not tell you
+which clause a number came from. Provenance is **stored structured data** —
+character span, page, bounding box — written at extraction time. Reaching for
+embeddings to answer "where did this figure come from" returns a plausible
+passage instead of the actual one. Same error as the Allvue RAG point above.
+
+**2. "Pandas, NumPy" for the calculation engine — these are float64.**
+Precisely what Phase 1 forbids: *decimal, never float*. Using NumPy for covenant
+ratios reintroduces the error the architecture exists to exclude. Pandas is fine
+for Companies House harvest analysis; it must never touch a covenant
+determination.
+
+*(`Pint` for units is a legitimate suggestion — but it enforces at runtime,
+where branded TypeScript types enforce at compile time. Ours is stronger.)*
+
+**3. "Claude 3.5 Sonnet or GPT-4o" — two generations stale.**
+Current is **Claude Opus 5.5** (`claude-opus-5-5`, 1M context, $4/$20 per MTok).
+See `../build-plan/phase-2-extraction-spike.md` for the table and for the
+citations constraint found while checking this.
+
+*Minor:* Cerberus is a validation library, not a rule engine. Kubernetes is
+over-engineering for two people — ECS/App Runner or Azure Container Apps.
+
+### 🟢 Two genuine gaps it exposed
+
+**1. Excel compliance certificates — not in our plan.**
+> "Openpyxl or Pandas for ingesting borrower-submitted Excel compliance
+> certificates or financial models"
+
+`../build-plan/phase-4-document-pipeline.md` assumes **PDFs throughout**. If
+borrowers submit figures in Excel — and in this market many will — that is a
+second ingestion path with its own parsing, its own provenance model (cell
+reference rather than page and bbox), and its own review UI.
+
+⚠️ **`[UNVERIFIED]` — ask a fund before building.** Neither discovery call
+covered submission format. Recorded as Q3 in `../open-questions.md`.
+
+**2. TanStack Table for the portfolio grid.**
+Sound Phase 5 suggestion for dense sortable monitoring grids with drill-down.
+Evaluate against building our own, per the standing rule on preferring a proven
+library.
+
+### Decision: no change to ADR 0001
+
+The convergence is reassuring; the errors are the kind that look authoritative
+and cost months. **The two gaps are real and are now tracked.**

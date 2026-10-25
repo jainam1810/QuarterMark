@@ -110,3 +110,25 @@ higher. **Measure against real documents before putting a figure in any pitch.**
 
 Recommendation on the table: mock data shaped exactly like the real schema, so swapping in
 Postgres later is a replacement rather than a rewrite. Awaiting a decision.
+
+
+---
+
+## Q3. Do borrowers submit compliance figures as PDF, Excel, or both?
+
+**Raised 2026-10-25.** `build-plan/phase-4-document-pipeline.md` assumes PDF
+throughout. A third-party blueprint flagged Excel compliance certificates as a
+normal input in this market.
+
+**Why it matters:** Excel is a **second ingestion path**, not a variation on the
+first. Different parsing, different provenance model (cell reference, not page
+and bounding box), different review UI. Building it late is expensive; building
+it unnecessarily is waste.
+
+⚠️ Neither discovery call covered submission format.
+
+**Ask Dev, or a fund contact:** *"When a borrower sends their quarterly
+compliance certificate, what actually arrives — a signed PDF, a spreadsheet, or
+both? And which one do you work from?"*
+
+**Do not assume either way.** See `positioning/customer-discovery.md`.

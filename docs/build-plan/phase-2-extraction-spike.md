@@ -131,3 +131,68 @@ above, and ~10 annotated agreements that become permanent regression fixtures.
 - Frontiers in AI 2026 — span-level clause extraction
 - Anthropic PDF support and Citations API documentation
 - `docs/research/technical-research.md` — parser coordinate conventions
+
+## Claude API constraints that shape the pipeline
+
+`[VERIFIED 2026-10-25 — Anthropic claude-api reference, model table cached 2026-10-06]`
+Added after Jainam raised a third-party blueprint recommending "Claude 3.5
+Sonnet or GPT-4o" — two generations stale.
+
+### Current models
+
+| Model | ID | Context | $/1M in | $/1M out |
+|---|---|---|---|---|
+| **Opus 5.5** *(default)* | `claude-opus-5-5` | 1M | $4 | $20 |
+| Sonnet 5.5 | `claude-sonnet-5-5` | 1M | $2 | $10 |
+| Haiku 5.5 | `claude-haiku-5-5` | 1M | $0.10 | $0.50 |
+
+**1M context.** A 200-page agreement fits with room to spare. PDF limits are
+**32 MB and 600 pages** per request.
+
+### 🔴 Citations and structured outputs are mutually exclusive
+
+Verbatim from the API reference: citations are **"Incompatible with
+`output_config.format` (returns a 400)"**.
+
+**This matters a lot here.** The pipeline wants both at once — covenant fields
+as validated JSON *and* a citation proving where each came from. One request
+cannot do both.
+
+**Three ways out, in order of preference:**
+
+1. **Tool use with `strict: true`.** The restriction names `output_config.format`
+   specifically, not tool schemas. A tool definition with `strict: true`,
+   `additionalProperties: false` and `required` guarantees schema-valid
+   arguments. ⚠️ **Verify this combination actually works in the spike** — it is
+   inference from the documented restriction, not a documented guarantee.
+2. **Two passes** — one for structure, one for citations, joined afterwards.
+   Doubles cost and introduces a reconciliation problem.
+3. **Citations only**, parsing the text ourselves. Loses the validation.
+
+**Resolve this in the Phase 2 spike.** It changes the request shape of the whole
+extraction pipeline, and discovering it during Phase 4 would be expensive.
+
+### Citation granularity — confirms the earlier finding
+
+Citations return `page_location` (`start_page_number` / `end_page_number`,
+1-indexed) for PDFs and `char_location` for text. **No bounding boxes.**
+
+This is exactly what `[VERIFIED 2026-08-04]` established above, now reconfirmed
+from the current reference. **The two-layer architecture stands**: the
+deterministic parser supplies geometry, Claude supplies meaning, joined on
+character spans.
+
+### Two cost levers the blueprint missed
+
+- **Prompt caching** — cache the agreement once, then ask many extraction
+  questions against it. Cached tokens read at roughly a tenth of the input
+  price. For a 200-page agreement interrogated field by field, this is the
+  single largest saving available.
+  ⚠️ Caching is a **prefix match** — any byte change invalidates everything
+  after it. Verify with `usage.cache_read_input_tokens`; if it is zero across
+  repeated calls, something is silently invalidating the prefix.
+- **Batch API** — **50% cost**, asynchronous. Right for the initial corpus run
+  and for any bulk re-extraction. Wrong for interactive onboarding.
+
+Both should be measured in the spike, since `0002-hosting-and-costs.md` carries
+only an `[ESTIMATE]` of ~£1 per agreement.
