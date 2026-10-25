@@ -61,5 +61,10 @@ Verified 2026-10-25: Allvue shipped it on 20 July 2026 with 50,000+ borrowers an
 we would reach **~4 borrowers per bucket** at 5 funds, where ~40 is wanted for a
 p75. **It is off the roadmap, not a Year-3 item.** The early-warning value we
 wanted from peer comparison is available at n=1 - trend breaks, add-back
-inflation, forecast-vs-actual drift - and moves to Phase 6. See
+inflation, forecast-vs-actual drift - and moves to Phase 6.
+
+**What replaced it:** *industry* benchmarking - one borrower against its UK sector,
+built from public Companies House filings and Insolvency Service sector data. No
+permission needed from anyone, free, and buildable now. This is what Jainam meant by
+benchmarking all along. See `../build-plan/phase-8-industry-benchmarking.md`. Also see
 `../build-plan/phase-8-benchmarking.md` and `corrections-register.md` §9.
