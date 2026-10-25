@@ -140,9 +140,79 @@ TypeScript, Next.js 16.3.0, PostgreSQL stand. Reasons, in order:
 5. **Phase 0 work and 12 source files already exist.** Switching now discards
    them for no capability gained
 
-⚠️ **The honest counter-argument:** C# and Java have native decimal types and a
-deeper talent pool in UK finance. If QuarterMark ever hires a team of five from
-a banking background, that is worth revisiting. **It is not worth revisiting at
-two people with a working foundation.**
+### The counter-argument, examined — Jainam pushed on it, and I was partly wrong
+
+`[corrected 2026-10-25]` I wrote that C#/Java have "a deeper talent pool in UK
+finance" as a throwaway counter-point. **Checked it. The data does not say what
+I said, and the part that is true points the opposite way.**
+
+`[VERIFIED — ITJobsWatch, 6 months to 4 Sep 2026]` ⚠️ Keyword matching on job
+adverts; measures *mentions*, not hires.
+
+| Language | UK permanent vacancies | Rank | Median salary |
+|---|---|---|---|
+| **C#** | **3,385** | 46 | **£60,000** |
+| Java | 2,847 | 56 | £70,000 |
+| JavaScript | 2,572 | 67 | £57,500 |
+| **TypeScript** | **1,896** | 108 | **£70,000** |
+
+**Two corrections to what I said:**
+
+1. **C# genuinely has more UK demand than TypeScript** — 1.8× the vacancies. My
+   implication that TypeScript is the more abundant hire was wrong.
+2. **But vacancy count measures demand, not supply.** More vacancies means more
+   employers competing for the same candidates. For a *hiring* employer that is
+   a cost, not a benefit.
+
+**The real finding is the salary column:** C# median **£60k against TypeScript's
+£70k** — roughly 14% cheaper per hire. That is a genuine point in C#'s favour
+for a bootstrapped founder, and it is the opposite of the argument I originally
+made.
+
+Also noted: TypeScript job ads frequently cite C# or Java too. These are not
+separate talent pools.
+
+### The decimal argument is also narrower than it sounds
+
+**C#'s `decimal` does not solve the hard problem.** It is 128-bit with 28–29
+significant digits — **not** arbitrary precision — and division still rounds.
+`1/3` is inexact in every decimal type ever built.
+
+So in any language we must still answer: **is 4.4999 a breach of a 4.50x
+covenant?** That is a rounding *policy*, decided once in the domain, and it is
+identical work in C#, Java or TypeScript.
+
+**And money here is integer minor units** (`src/lib/format.ts`), which are exact
+in JavaScript up to ~£90 trillion in pence. Decimals are needed only for the
+division that produces ratios — which is exactly what `decimal.js` does, already
+verified in `../build-plan/phase-0-foundations.md`.
+
+What C# genuinely buys is **a safer default**: `decimal` is the obvious choice,
+whereas TypeScript makes `number` the obvious choice and we have to resist it.
+That is a real discipline risk, mitigable with branded types and a lint rule
+banning raw arithmetic on money types — but it is work C# would not require.
+
+### So does the decision change? No — and the reason is not technical
+
+Both counter-arguments survive scrutiny better than I first allowed. They still
+lose, on grounds that have nothing to do with language quality:
+
+| | |
+|---|---|
+| **We are not hiring** | Two people, pre-revenue. The hiring argument concerns a future that arrives only after product-market fit |
+| **Switching buys zero customer capability** | Weeks of work; not one thing a fund could see |
+| **The actual risk is not shipping** | CrossBorderX died at "almost ready". A stack rewrite before the first customer is the most reliable way to repeat that |
+
+**If we were starting from zero today, with no code written, would the answer
+change?** Honestly — still no, but for a different reason than hiring:
+`phase-5-dashboard` is the first demoable build and Phase 2 calls the review
+screen "the hardest-worked screen in the product". A .NET backend plus a React
+frontend is two ecosystems, two build chains, two skill sets — **for two
+people.** One language across the whole stack is the staffing argument that
+actually applies at our size.
+
+**What would change it:** hiring 3+ engineers from a banking background, or a
+requirement to integrate deeply with a Microsoft ERP. Neither is on the
+horizon.
 
 **Sources:** [Allvue fund accounting](https://www.allvuesystems.com/solutions/fund-accounting) (Dynamics NAV, on their own site) · Allvue job listings via Indeed and ZipRecruiter (no .NET/C# requirement found) · `phase-2-extraction-spike.md`
