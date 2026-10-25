@@ -128,6 +128,8 @@ in from the start or they become migrations:
 | From | Requirement |
 |---|---|
 | Phase 1 | Bitemporal versioning, `btree_gist` exclusion constraint |
+| Phase 1 | **AST must render as Excel formulas, not only evaluate** — `../decisions/0005-verification-model.md` |
+| Phase 2 | Page citation captured **per input figure**, not per covenant |
 | Phase 4 | Server-generated storage keys scoped per tenant (attack #7) |
 | Phase 7 | Non-accrual status, lien seniority, weighted average spread, average life, amendment history |
 | Phase 8 | Sector tag, size band, per-record pooling rights flag |

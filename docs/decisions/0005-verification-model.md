@@ -186,3 +186,137 @@ repeated to their investment committee.**
 - [Automation bias in AI-assisted medical decision-making](https://arxiv.org/pdf/2411.00998) — experience reduces commission errors; omission errors similar across groups
 - [Exploring automation bias in human–AI collaboration](https://www.researchgate.net/publication/392771285_Exploring_automation_bias_in_human-AI_collaboration_a_review_and_implications_for_explainable_AI) — review
 - `../build-plan/phase-2-extraction-spike.md` · `phase-1-covenant-engine.md` is at `../build-plan/` · `../positioning/customer-discovery.md`
+
+---
+
+# 🔑 Mechanism 6 — The backtest workbook (Jainam's design, 2026-10-25)
+
+> "Can you provide something like a calculation formula Excel with specific page
+> number, so the analyst can backtest whether every calculation and extraction
+> is correct or not?"
+
+**This is the strongest mechanism in this document and it supersedes mechanism 1
+as the headline.** Every other mechanism asks the analyst to trust *our* screen.
+This one hands them the working and invites them to check it in the tool they
+already use.
+
+## What the workbook is
+
+One file per covenant test. Not a dump of values — **a live calculation**.
+
+| Sheet | Contents |
+|---|---|
+| **Result** | Borrower, facility, covenant, test date, our result, pass/fail, verification status |
+| **Inputs** | One row per figure: value · **source page** · clause reference · link back to the document |
+| **Calculation** | **Live Excel formulas** — `=Inputs!D8/Inputs!D14`, never a pasted `3.4` |
+| **Definition** | The covenant clause as extracted, in full, to read against the formula |
+| **Unmapped** | The clause text we could **not** place (mechanism 1, carried in) |
+
+Because the formulas are live, the analyst can **change an input and watch the
+ratio move**. That is backtesting: they are not reading our answer, they are
+re-deriving it.
+
+## 🔴 The architectural rule this imposes
+
+**One AST, two renderers. Never two implementations.**
+
+```
+                 covenant definition (JSON AST)
+                            │
+              ┌─────────────┴─────────────┐
+              ▼                           ▼
+      engine evaluates            Excel formulas generated
+      (decimal.js)                    (ExcelJS)
+              │                           │
+              └──────── must agree ───────┘
+```
+
+If anyone hand-writes the Excel formulas separately, the two will drift — and an
+export that disagrees with the app is **worse than no export at all**. The
+workbook must be a *rendering* of the same AST the engine evaluates
+(`../build-plan/phase-1-covenant-engine.md`).
+
+## 🟢 The free test that falls out of this
+
+Generate the workbook → evaluate its formulas programmatically → compare to the
+engine's result. **They must match on every fixture.**
+
+That is a property-based test over the entire covenant engine, obtained for
+nothing, and it runs in CI on every push. A divergence is a real bug in one of
+the two renderers.
+
+## ⚠️ The gotcha that would bite, and it is ironic
+
+**Our engine uses integer minor units and `decimal.js`. Excel uses IEEE 754
+doubles.** So Excel may compute `3.39999999999` where we report `3.40`.
+
+An analyst who opens the workbook to verify our number and finds it *disagrees
+in the ninth decimal* loses exactly the trust this feature exists to build.
+
+**Required mitigations:**
+
+1. **State the rounding policy in the workbook**, in writing, on the Result
+   sheet. Not a footnote.
+2. **Round both sides to the same stated precision** before display and before
+   comparison.
+3. **The CI comparison needs a tolerance** — exact equality will fail.
+4. **Be explicit about the threshold test.** Does `4.4999` breach a `4.50x`
+   covenant? That is a policy decision, it must be the same in both renderers,
+   and it must be printed in the workbook.
+
+This is the concrete form of a point already recorded in
+`0001-tech-stack.md`: *the hard part of financial math is the rounding policy,
+not the type.*
+
+## Why it is commercially strong
+
+1. **Zero workflow change.** `../positioning/customer-discovery.md` found funds
+   want trust and **hate changing how they work**. This meets them inside Excel
+   rather than asking them into our UI.
+2. **It inverts the trust problem.** Not *"trust our number"* but *"here is our
+   working — check it."*
+3. **It is an audit artefact.** It goes in the IC pack, the audit file, and to
+   the external auditor, unchanged.
+4. **It survives us.** A fund that can re-derive every figure offline is not
+   locked in — which, counter-intuitively, makes them more willing to adopt.
+
+⚠️ **Do not claim it is unique.** Allvue exports to PDF and Excel; Lumonic
+advertises *"audit trail with source-cell traceability back to the original
+document"* (`../research/technical-research.md:441`). **Whether anyone ships
+live formulas with page citations is `[UNVERIFIED]`** — and absence from a
+marketing page is not absence from a product. Two claims of competitive
+uniqueness in this repo have already turned out false
+(`../positioning/corrections-register.md` §1, §9).
+
+## Library
+
+`[VERIFIED 2026-10-25]` **ExcelJS** — MIT licensed, actively maintained,
+supports writing formulas, hyperlinks and formatting.
+
+⚠️ **Not SheetJS.** Its community edition is Apache 2.0, but an April 2026
+issue reports the maintainer moved to a paid model and that the free npm
+package (`xlsx@0.18.5`) is effectively abandoned **with unfixed high-severity
+vulnerabilities**. Sources conflict on its current status — **check its issue
+tracker directly before reconsidering.** `xlsx-populate` shows significantly
+reduced maintenance.
+
+For the CI round-trip, a formula-evaluation library is needed. ⚠️ **Check
+licensing before adopting** — HyperFormula is GPLv3-or-commercial, which does
+not suit a closed commercial product.
+
+## Consequences
+
+| Phase | Consequence |
+|---|---|
+| **1** | The AST must be rich enough to render as Excel formulas, not only to evaluate. **Design this in from the start** — retrofitting it means changing the AST shape |
+| **1** | Rounding policy becomes an explicit, documented, tested part of the engine |
+| **2** | Page citations must be captured per input figure, not per covenant |
+| **3** | Schema stores the page reference for every input value |
+| **4** | Export is generated per covenant test and stored, not produced on demand only |
+| **7** | The workbook is an IC-pack component, not a separate feature |
+
+## Sources
+
+- [ExcelJS](https://exceljs.org/) — MIT, formula support
+- [SheetJS vs ExcelJS vs node-xlsx 2026](https://www.pkgpulse.com/guides/sheetjs-vs-exceljs-vs-node-xlsx-excel-files-node-2026) — licence comparison ⚠️ aggregator
+- [Replace xlsx (SheetJS) with ExcelJS](https://github.com/DIGI-UW/OpenELIS-Global-2/issues/3313) — April 2026: abandoned free package, unfixed vulnerabilities ⚠️ single issue thread, verify directly
