@@ -1,8 +1,11 @@
 # Phase 8 — Cross-fund benchmarking
 
-**Verdict: 🟡 Legal and already proven in production — but only on the slice of
-data you hold contractual rights to. The real blocker is scale, not law.**
-Checked 2026-10-25. **Revised 2026-10-25** after a challenge from Jainam.
+**Verdict: ⚪ Off the roadmap. Legal where permission exists, but the data
+requirement is ~10× beyond what a bootstrapped product can reach. The value we
+wanted from it is available at n=1 — move it to Phase 6.**
+Checked 2026-10-25. **Revised twice on 2026-10-25**, both times after Jainam
+challenged the verdict and both times because the correct answer was already in
+our research file. See the process note at the end.
 
 ## Correction to the first version of this document
 
@@ -115,19 +118,61 @@ See `../decisions/0001-tech-stack.md`.
 
 ## The real blocker: scale
 
-With the legal question reduced to a tracked flag, **the statistics become the
-binding constraint** — and they are unforgiving:
+### Second correction — the "~13 per sector" figure was wrong
 
-| | Borrowers | Per sector (≈12) | After ~70% rights |
-|---|---|---|---|
-| Us at 5 funds | ~225 | ~18 | **~13** |
-| Us at 30 funds | ~1,350 | ~110 | ~79 |
-| **Allvue** | **50,000+** | — | — |
+`[Challenged by Jainam 2026-10-25, and he was right again.]`
 
-**A benchmark built on 13 borrowers is worse than none** — it produces
-confident, wrong percentiles, which is the exact failure mode Phase 2 identified
-as fatal to trust. Allvue reached this feature with 500+ customers. That gap
-does not close with a legal opinion; it closes with customers.
+The first revision of this document asserted *"~13 borrowers per sector"* with no
+provenance tag. It was arithmetic on **three unlabelled assumptions**:
+
+| Input | Value used | Actual provenance |
+|---|---|---|
+| Borrowers per fund | ~45 | `[ASSERTED]` — midpoint of "15 to 80 loans" in `README.md:196`, our own business plan, not market data |
+| Sector count | ~12 | **`[INVENTED]`** — no source. GICS has 11, ICB 11, SIC 21 sections |
+| Early customer count | 5 | `[ESTIMATE]` — arbitrary |
+
+**And the error ran in the optimistic direction.** Dividing by sector alone is not
+how a peer cohort is built. `[VERIFIED 2026-10-25]` Allvue's cohorts are
+definable by **sector, geography, EBITDA range and inception year** — four
+dimensions, not one. Our own `docs/research/technical-research.md:786` and `:958`
+recorded this on 2026-08-04 and this document failed to use it.
+
+Redone honestly, at 5 funds (~225 borrowers, ~158 poolable after the ~70% rights
+filter):
+
+| Cohort definition | Buckets | Borrowers per bucket |
+|---|---|---|
+| Sector only (the generous slice) | ~12 | ~13 |
+| Sector × EBITDA band | ~36 | **~4** |
+| Allvue's full cohort (sector × geo × EBITDA × vintage) | ~500+ | **<1** |
+
+### How many are actually needed
+
+`[ESTIMATE — practitioner convention, not a theorem]` The common heuristic is
+**10 observations in the tail**, so estimating the *p*th percentile wants
+roughly `10/(1−p)` samples. AWS CloudWatch uses exactly this as its low-sample
+gate.
+
+| Percentile | Samples wanted |
+|---|---|
+| Median | ~20 |
+| **p75** | **~40** |
+| p90 | ~100 |
+
+⚠️ I could not find a peer-reviewed source establishing this as a precise cutoff.
+Treat it as an order-of-magnitude guide, which is all the decision needs.
+
+**The gap is not marginal.** A realistic cohort gives us ~4 where ~40 is wanted —
+a factor of ten. And at 30 funds it is still only ~26 per sector × EBITDA bucket.
+**So the "~30 contributing funds" gate in the first revision was also too
+optimistic.** A defensible p75 on realistic cohorts needs closer to **60–100
+contributing funds**, which is more than the entire realistic customer base of a
+bootstrapped product.
+
+⚠️ **Allvue's own numbers do not reconcile either.** Our August research recorded
+*"1,933 issuances since 2022"*; their current marketing page claims *"50,000+
+borrowers, 150,000+ credit assets"*. Both are vendor claims. Do not quote either
+as fact.
 
 `[VERIFIED 2026-10-25]` **ExactCov, Lumonic and CovenantIQ benchmark within a
 firm's own portfolio.** Cross-fund pooling among the direct competitors is
@@ -139,28 +184,51 @@ Allvue's peer percentiles. That was self-contradictory. Allvue does.
 
 ## Decision
 
-**Unchanged, for a different reason.** Still a Year-3 capability — not because
-it may be illegal, but because ~13 borrowers per sector cannot produce an
-honest percentile.
+**Changed. Do not plan this feature.**
 
-**Do not promise this to a customer, and stop treating it as a moat.** The
-competitive landscape doc lists cross-fund benchmarking as a defensible
-position. Allvue got there first, in July 2026, with 200× the data. Keep the
-hooks; drop it from the pitch.
+The first version said "Year 3, at ~30 funds". That gate was built on the broken
+arithmetic above. On a realistic cohort definition the requirement is 60–100
+contributing funds — beyond the plausible reach of a bootstrapped product, and
+not a thing to hold roadmap space for.
+
+**This is what our own research concluded on 2026-08-04 and this document twice
+failed to apply** — `docs/research/technical-research.md:958`, verbatim:
+
+> "QuarterMark cannot replicate this at launch. Do not compete on peer
+> percentiles initially; compete on single-borrower forensic depth and on
+> trajectory/early-warning logic **that works with n=1** — trend breaks,
+> quality-of-earnings drift, add-back inflation, forecast-vs-actual variance."
+
+**That is the answer.** Every one of those four signals works on a single
+borrower's own history. No pooling, no consent, no critical mass, no legal
+question. And they are the things an analyst actually acts on.
 
 | Action | When | Changed |
 |---|---|---|
-| Build per-record rights flag into the schema | Phase 3 | **was fund-level opt-in** |
-| Build sector/size-band tags | Phase 3 | — |
-| Build consent capture and audit | Phase 3 | — |
-| Have a lawyer review the consent clause wording | Before first contribution | **was: before Phase 3 schema design, as a gate** |
-| Build the benchmark itself | **At ~30 contributing funds** | — |
+| Build the **n=1 trajectory signals** (trend break, add-back inflation, forecast-vs-actual drift) | **Phase 6, alongside early warning** | **new — this replaces the feature** |
+| Build per-record rights flag into the schema | Phase 3 | cheap insurance, keep it |
+| Build sector/size-band tags | Phase 3 | cheap insurance, keep it |
+| Have a lawyer review consent wording | Only if a customer asks to contribute | downgraded further |
+| Build the benchmark itself | **Not planned** | **was: at ~30 funds** |
 
-## Risk rating: 🟡 Medium — was 🔴
+## Risk rating: ⚪ Not a risk — it is off the roadmap
 
-The legal question is answered by a competitor's production system and their own
-published rights percentage. What remains is a schema decision made correctly
-once, and a scale problem that only customers solve.
+Nothing to de-risk once the feature is not being built. The two Phase 3 schema
+hooks cost nothing and preserve the option if we ever reach that scale.
+
+**The genuine finding of Phase 8 is not about benchmarking at all:** it is that
+the early-warning value we wanted from peer comparison is available at n=1, and
+Phase 6 is where it belongs.
+
+## Process note
+
+This document was wrong twice, in opposite directions, and both times Jainam
+caught it and both times the correct answer was already in
+`docs/research/technical-research.md`.
+
+**The research file is more reliable than any summary built from it.** Check
+`docs/research/` before asserting a conclusion about competitors, scale or
+market structure.
 
 ## Sources
 

@@ -143,7 +143,19 @@ Two things I got wrong, in the same document:
    and pool only the cleared slice.
 2. Listed it as a **moat**. The incumbent shipped it first with ~200x the data.
 
-**Say instead:** cross-fund benchmarking is legal where permission exists, requires a
-per-contribution rights flag (not fund-level opt-in), and is a Year-3 capability gated on
-customer count — roughly 30 contributing funds. Not a differentiator. See
+**Then I got the scale wrong too.** The "~30 contributing funds" gate and the
+"~13 borrowers per sector" figure were arithmetic on three unlabelled assumptions, one of
+which (12 sectors) I invented. A real peer cohort is **sector x geography x EBITDA range x
+inception year** - verified from Allvue, and already recorded in
+`../research/technical-research.md:786` on 2026-08-04. That gives **~4 borrowers per
+bucket at 5 funds**, against roughly 40 wanted for a p75.
+
+**Say instead:** cross-fund benchmarking is legal where permission exists, but the data
+requirement is ~10x beyond a bootstrapped product's reach. **It is off the roadmap.** The
+early-warning value lives at n=1 instead - trend breaks, add-back inflation,
+forecast-vs-actual variance - which is what `../research/technical-research.md:958`
+concluded in August. Keep only the cheap Phase 3 schema hooks. See
 `../build-plan/phase-8-benchmarking.md`.
+
+**Process lesson:** this entry was written wrong twice. Both times the correct answer was
+already in `../research/`. **Check the research file before asserting a conclusion.**

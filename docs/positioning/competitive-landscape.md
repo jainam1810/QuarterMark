@@ -57,6 +57,9 @@ before the US players arrive. This is a distribution race, not a technology race
 
 ⚠️ **Cross-fund benchmarking was listed here as a moat and has been removed.**
 Verified 2026-10-25: Allvue shipped it on 20 July 2026 with 50,000+ borrowers and
-500+ contributing customers. We would reach ~13 borrowers per sector at 5 funds.
-It is a Year-3 capability, not a differentiator. See
+500+ contributing customers. On a realistic peer cohort (sector x EBITDA band)
+we would reach **~4 borrowers per bucket** at 5 funds, where ~40 is wanted for a
+p75. **It is off the roadmap, not a Year-3 item.** The early-warning value we
+wanted from peer comparison is available at n=1 - trend breaks, add-back
+inflation, forecast-vs-actual drift - and moves to Phase 6. See
 `../build-plan/phase-8-benchmarking.md` and `corrections-register.md` §9.
