@@ -99,13 +99,110 @@ Five-digit codes. "Grocery retail" is a real bucket (e.g. `47110`, retail sale
 in non-specialised stores with food predominating). Granular enough for a
 meaningful peer set.
 
-### 4. ONS profitability — ❌ rejected `[VERIFIED]`
+### 4. Stock market / live market data APIs — ❌ rejected, three reasons
+
+`[Jainam's suggestion 2026-10-25: "any active API which provides live market
+data... maybe stock market data?"]` Good instinct, and it fails on three
+independent grounds — any one of which is enough.
+
+**Reason 1 — the licensing cost is prohibitive, and it is an ongoing liability.**
+`[VERIFIED 2026-10-25]`
+
+| Provider | Finding |
+|---|---|
+| Financial Modeling Prep | Displaying or redistributing data requires a separate **Data Display and Licensing Agreement**; self-serve plans sit under a **personal-use** tab |
+| Alpha Vantage | Standard terms grant a **personal, non-commercial licence** unless agreed otherwise in writing |
+| FTSE Russell | **Redistribution is its own licence tier.** One wealth manager was quoted **~£40,000** merely to quote FTSE index values in client material; fees scale with AUM and user count |
+
+⚠️ These are third-party summaries, not the primary terms — but they agree, and
+they all point the same way: **no standard plan permits showing this data inside
+a product we sell.** Contrast Companies House: Open Government Licence v3.0,
+free, commercial use explicitly permitted, no negotiation.
+
+For a bootstrapped product, a per-seat market-data licence is not a cost line —
+it is a structural dependency on a counterparty who can reprice us at renewal.
+
+**Reason 2 — listed companies are not comparable to our borrowers.**
+UK listed grocery retail is Tesco and Sainsbury's: £20bn+ turnover. Our
+borrower is a £30m regional chain. Different margins, different cost of capital,
+different capital structure. Comparing their *levels* is misleading, and a
+misleading benchmark is the Phase 2 failure mode — confidently wrong.
+
+**Reason 3 — and this is the decisive one: share prices are the wrong metric.**
+
+A covenant measures **leverage, interest cover and cash flow**. None of those is
+market data. They come from **accounting** data.
+
+Share prices measure equity sentiment, which no covenant tests. So the live feed
+would buy us a number we do not compare against anything.
+
+**And listed companies file at Companies House too.** We already get their full
+accounts free under OGL. We get the data that matters without paying for the
+data that does not.
+
+### 5. Where market data *would* be legitimate
+
+Not for levels — for **trend direction**. "UK listed food retail revenue is down
+8% year on year" is a real sector signal even though Tesco is not our borrower's
+peer. If that is ever wanted, the licensed-free route is UK government data
+(ONS, Bank of England statistical database), not a commercial equity feed.
+
+`[DEFERRED]` Not needed for v1. Accounts give us the trend too, just later.
+
+### 6. ONS profitability — ❌ rejected `[VERIFIED]`
 
 ONS *Profitability of UK companies* splits private non-financial corporations
 into only four groups: UK continental shelf, manufacturing, non-financial
 services, and other. **Far too coarse** — there is no "grocery retail". Latest
 release found was April–June 2025, published 28 Nov 2025, and the quarterly
 figures are published only once a year. Not usable for this.
+
+## How often does the comparison run?
+
+`[Jainam's question 2026-10-25: "daily basis, weekly basis, monthly, quarterly?"]`
+
+**The governing rule: you cannot compare more often than your borrower reports.**
+
+A borrower's EBITDA arrives in a quarterly compliance certificate, for a quarter
+that ended maybe 45 days ago. Running that against today's sector figure every
+morning produces a number that *looks* live and is not. That is false precision,
+and it is the same failure mode Phase 2 identified as fatal to trust.
+
+So the answer is not one frequency — it is **four layers moving at different
+speeds**, and only one of them is the benchmark itself.
+
+| Layer | Frequency | Needs new borrower data? | Source |
+|---|---|---|---|
+| **Company events** — new charges, director exits, overdue accounts | **Daily** | No | Companies House stream (Phase 6) |
+| **Sector distress rate** — insolvencies in the borrower's SIC code | **Monthly** | No | Insolvency Service |
+| **The benchmark comparison** — borrower vs sector | **Quarterly** | **Yes** | Harvested accounts |
+| **Sector medians refresh** — as peers file | Rolling / annual | No | Harvested accounts |
+
+**The two middle layers are the commercially interesting ones**, because they
+move *without waiting for the borrower*. An alert reading *"insolvencies in your
+borrower's sector are up 40% this quarter"* is actionable on a Tuesday in month
+two, with no new borrower numbers at all. That is the "save analyst time"
+promise working between reporting dates.
+
+### 🔴 The design constraint this creates: snapshot the sector, do not recompute it
+
+The sector median **drifts continuously** as peer companies file their accounts.
+So if Q1's comparison is recomputed from today's sector data, **the same
+historical comparison changes every time anyone opens it.** An analyst who
+showed the Q1 chart to an investment committee could not reproduce it a month
+later.
+
+**Therefore: the sector benchmark must be stored as at the borrower's test
+date**, not recalculated live. The comparison is a recorded fact, not a query.
+
+This is the **same bitemporal requirement already committed to for covenant
+definitions** in Phase 1 — "what did we believe, and as at when". The sector
+benchmark is a second consumer of that machinery, which is an argument for
+getting it right in Phase 3 rather than bolting it on.
+
+⚠️ It also means a re-stated or late-filed peer account must not silently
+rewrite history. Corrections create a **new** version; the old one stays
+readable.
 
 ## The constraints that shape the build
 
@@ -164,6 +261,8 @@ destroys history permanently.
 | Harvest Insolvency Service SIC tables (back to 2015, available any time) | Phase 6 |
 | Evaluate open-source iXBRL extractors before building one | Phase 8 |
 | Measure real coverage per sector before shipping any comparison | Phase 8 |
+| Store sector medians bitemporally, as at the borrower's test date | **Phase 3 schema** |
+| Do **not** licence commercial market data | — rejected, see above |
 
 ## Sources
 
@@ -176,5 +275,9 @@ destroys history permanently.
 - [UK Government confirms Companies House accounts and filing reforms will go ahead](https://icas.com/news-insights-events/news/practice/uk-government-confirms-companies-house-accounts-and-filing-reforms-will-go-ahead/) — ICAS: 1 April 2028 confirmed 9 June 2026, delayed from 1 April 2027
 - [Important changes to how your company files accounts from April 2028](https://www.crowe.com/uk/insights/companies-house-reforms-2028-digital-filing-changes) — small-company P&L requirement, public-register opt-out, iXBRL mandate
 - [Profitability of UK companies](https://www.ons.gov.uk/economy/nationalaccounts/uksectoraccounts/bulletins/profitabilityofukcompanies/apriltojune2025/pdf) — ONS, rejected as too coarse
+- [Financial Modeling Prep alternatives](https://developer.stockfit.io/blog/financial-modeling-prep-alternatives) and [Alpha Vantage review](https://www.findmymoat.com/tools/alpha-vantage) — commercial display/redistribution requires a separate negotiated agreement ⚠️ third-party summaries, confirm with each vendor before relying on it
+- [FTSE licence charges leave wealth managers seething](https://citywire.com/wealth-manager/news/ftse-license-charges-leave-wealth-managers-seething/a582836) — Citywire: ~£40,000 quoted to quote index values; fees scale with AUM and headcount
+- [FTSE information provider additional terms](https://www.lseg.com/content/dam/ftse-russell/en_us/documents/other/information-provider-additional-terms-march.pdf) — LSEG: index values are proprietary, no further distribution without written consent
+- `phase-1-covenant-engine.md` — bitemporal versioning, which the sector snapshot reuses
 - `phase-8-benchmarking.md` — why cross-fund pooling was killed
 - `phase-6-early-warning.md` — Companies House streaming, pairs with sector insolvency rates
