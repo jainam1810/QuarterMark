@@ -304,6 +304,87 @@ which is the hardest extraction target (`phase-2-extraction-spike.md` rates
 EBITDA definitions at 0.65–0.85). **This feature inherits Phase 2's accuracy
 ceiling, so the add-back list stays human-verified.**
 
+## Harvest everything, keep almost nothing
+
+`[Jainam 2026-10-25]` Proposed a targeted harvest: download only the sectors we
+have borrowers in, triggered when a fund onboards a loan, because *"there will
+be hundreds of sectors and downloading all of them blindly is a waste of
+storage."*
+
+**Right instinct, wrong mechanism.** Three facts decide it.
+
+### Fact 1 — the download cannot be filtered by sector `[VERIFIED]`
+
+The bulk file is **one ZIP containing every filing**. Companies House offers no
+"grocery retail only" option. Selecting by sector would mean identifying the
+companies first and then pulling each one through the **Document API, which is
+rate-limited and documented as not scaling** for bulk work.
+
+So the targeted plan downloads the same bytes and then discards most of them.
+The saving does not exist.
+
+### Fact 2 — the storage is trivially cheap `[VERIFIED 2026-10-25]`
+
+Actual daily file sizes from `download.companieshouse.gov.uk`:
+
+| Day type | Size |
+|---|---|
+| Typical weekday | **60–110 MiB** |
+| Month-end | 150–380 MiB |
+| 1 Oct 2026 (filing deadline peak) | **597.6 MiB** |
+
+September 2026 totalled **~2.7 GiB**; October tracked similarly. So:
+
+**≈2–3 GB per month, ≈30 GB per year, compressed.**
+
+At commodity object-storage rates that is **well under £1/month**, and five
+years of accumulation is roughly the price of a coffee. **Storage is not the
+constraint. It was never going to be.**
+
+### Fact 3 — 🔴 and this is decisive: the window is 12 months and the loss is permanent
+
+Waiting until onboarding to start collecting a sector means **everything older
+than 12 months is already gone and cannot be bought back**.
+
+The value of a sector benchmark is the **trend** — "grocery leverage has climbed
+three years running". A standing start gives a single dot, not a line.
+
+⚠️ Partial mitigation: UK accounts carry **prior-year comparatives**, so one
+filing yields two data points. Twelve months of harvesting therefore gives
+roughly two years of history rather than one. Better than nothing, still not a
+trend.
+
+**And it is customer-facing.** Onboard a borrower in a sector we have never seen
+before:
+
+| | Day one |
+|---|---|
+| Harvest everything | Years of sector history, immediately |
+| Harvest on demand | *"Come back next year."* |
+
+### The design that honours the instinct
+
+Jainam's goal — do not hoard what we do not need — is correct and is achieved a
+different way:
+
+1. **Download the monthly file** (we cannot filter it anyway)
+2. **Parse it once**, extracting only the fields we need: turnover, profit,
+   debt, SIC code, year end, comparatives
+3. **Delete the raw ZIP**
+4. Keep only the extracted figures — a small fraction of the raw size
+
+**Result: complete history for every sector, and almost no stored bytes.** The
+raw file is transient working data, not an archive.
+
+`[ESTIMATE]` Parsed records are of the order of a few hundred bytes per company
+against ~100 MB per raw daily ZIP. Measure it in the spike rather than trusting
+this figure.
+
+⚠️ **One caveat on deleting the raw file:** if the parser later turns out to
+have a bug, the original cannot be re-downloaded beyond 12 months. **Retain raw
+ZIPs for a rolling window — 12–24 months — before deletion.** At £1/month this
+is cheap insurance, and it preserves the ability to re-parse.
+
 ## The constraints that shape the build
 
 **1. The REST API does not return parsed financials.** `[VERIFIED]` It returns
@@ -358,6 +439,7 @@ destroys history permanently.
 | Action | When |
 |---|---|
 | **Start harvesting monthly bulk files to object storage** | **Phase 0 — now** |
+| Parse on arrival, keep extracted figures, retain raw ZIPs 12–24 months only | Phase 0 |
 | Harvest Insolvency Service SIC tables (back to 2015, available any time) | Phase 6 |
 | Evaluate open-source iXBRL extractors before building one | Phase 8 |
 | Measure real coverage per sector before shipping any comparison | Phase 8 |
@@ -382,6 +464,7 @@ destroys history permanently.
 - [Leveraged Finance: Adding Up — EBITDA Addback Study](https://www.spglobal.com/ratings/en/research/articles/240327-leveraged-finance-adding-up-ebitda-addback-study-shows-moderate-improvement-in-earnings-projection-accuracy-13045496) — S&P Global Ratings, the primary source ⚠️ **read this before quoting any add-back figure**
 - [Report on Vulnerabilities in Private Credit](https://www.fsb.org/uploads/P060526.pdf) — FSB, 6 May 2026: headline leverage may be understated by EBITDA adjustments
 - [Leveraged Loans and CLOs: Good Practices](https://www.iosco.org/library/pubdocs/pdf/IOSCOPD766.pdf) — IOSCO FR03/2024: add-backs overstate EBITDA, understate leverage
+- [Companies House accounts bulk data download page](https://download.companieshouse.gov.uk/en_accountsdata.html) — actual daily file sizes, 60-day window
 - `phase-2-extraction-spike.md` — the add-back extraction ceiling this feature inherits
 - `phase-1-covenant-engine.md` — bitemporal versioning, which the sector snapshot reuses
 - `phase-8-benchmarking.md` — why cross-fund pooling was killed
