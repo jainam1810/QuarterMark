@@ -1,0 +1,104 @@
+# Phase 1 — Covenant engine
+
+**Verdict: ✅ Buildable. Main decision was library-vs-build. Answer: build — but small.**
+Checked 2026-10-25.
+
+## The question worth asking
+
+Engineering standards say *use a safe public library rather than hand-roll*. So:
+is there an expression evaluator we can trust with a covenant formula?
+
+**Answer: no, and the reason matters.**
+
+## Rejected: mathjs `evaluate()`
+
+`[VERIFIED 2026-10-25]` mathjs had **two remote-code-execution CVEs in 2026**,
+both sandbox escapes in the expression parser:
+
+| CVE | Severity | Affected | Fixed |
+|---|---|---|---|
+| CVE-2026-40897 | **CVSS 8.8 HIGH** | 13.1.1 – <15.2.0 | 15.2.0 |
+| CVE-2026-41139 | High | 13.1.0 – <15.2.0 | 15.2.0 |
+
+Reported mechanism: `isSafeProperty` checked property access from user
+expressions but not from internal code paths, letting an attacker reach the
+`Function` constructor and execute arbitrary JavaScript.
+
+Current `mathjs` is **15.2.0, published 2026-04-07** — patched. So why still reject it?
+
+**Because of our threat model.** Covenant formulas are not written by us. They are
+derived from **borrower-supplied PDFs, through an LLM**. A malicious or merely
+malformed document can influence what the model emits. That makes the expression
+**untrusted input** — precisely the scenario those CVEs describe. Two escapes of
+the same class in one year is a pattern, not an accident, and a library's sandbox
+is the wrong place to put a trust boundary we can eliminate entirely.
+
+## Rejected: expr-eval
+
+`[VERIFIED]` Last published **2019-09-28**. Seven years unmaintained. Not a
+candidate for financial code.
+
+## Chosen: closed JSON AST + total interpreter
+
+What all three architecture designs independently recommended.
+
+**This is not over-engineering — it is less code than the library.**
+
+We do not need a maths *language*. Covenant calculation is a narrow domain of
+roughly **eight operations**:
+
+```
+literal        a fixed number from the agreement (e.g. the £500,000 cap)
+reference      a named input (e.g. "operating_profit")
+sum            add a list of items
+subtract       a minus b
+divide         a over b            <- the only precision-critical op
+cap            min(value, limit)   <- exceptional items capped at £500k
+floor          max(value, limit)
+compare        value against threshold -> pass | breach
+```
+
+A closed enum of eight node types **cannot express "call a function."** Remote
+code execution is therefore impossible *by construction*, not by filtering.
+That is a stronger guarantee than any sandbox, and it is the whole argument:
+
+> The general-purpose library is **more** code and **less** safe than the thing
+> we actually need. Over-capability is the vulnerability.
+
+`[ESTIMATE]` ~300–500 lines, auditable in one sitting, exhaustively unit-testable.
+
+## How it gets built (TDD)
+
+1. Types: `Expr` union, `Money` (integer minor units), `Ratio` (Decimal)
+2. Failing test: a leverage ratio from fixed inputs
+3. Interpreter until green
+4. Then, one failing test at a time: the £500k cap · disallowed add-backs ·
+   equity cure as debt-reduction vs EBITDA-addition (~4× difference, see
+   `docs/open-questions.md`) · null handling (**null is never zero** — it is
+   INDETERMINATE) · divide-by-zero · period mismatch
+5. Every result carries a **trace**: each input, its value, its source page
+
+Arithmetic uses **decimal.js** with pinned precision, hashed into every trace
+(see `phase-0-foundations.md`).
+
+## Forward dependency (not a Phase 1 blocker)
+
+Bitemporal versioning needs the Postgres **`btree_gist`** extension for an
+exclusion constraint preventing overlapping validity ranges. Supabase's own blog
+documents the exact pattern (`create extension btree_gist`, then
+`exclude using gist (id with =, validity with &&)`), but I could not find
+`btree_gist` on a definitive Supabase enabled-extensions list.
+
+**Five-minute check in Phase 3.** Phase 1 touches no database.
+
+## What Phase 1 delivers
+
+A tested, deterministic engine: covenant definition + inputs in, ratio +
+pass/breach + full provenance trace out. No database, no UI, no API.
+
+## Sources
+
+- CVE-2026-40897 / CVE-2026-41139 advisories (mathjs expression parser RCE)
+- npm registry: mathjs 15.2.0 (2026-04-07), expr-eval 2.0.2 (2019-09-28)
+- Supabase blog, "Simplifying Time-Based Queries with Range Columns"
+- `docs/research/architecture-proposals.md` — three independent designs
