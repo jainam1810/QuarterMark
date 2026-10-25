@@ -204,6 +204,106 @@ getting it right in Phase 3 rather than bolting it on.
 rewrite history. Corrections create a **new** version; the old one stays
 readable.
 
+## What the comparison actually is
+
+`[Jainam 2026-10-25: "once arrived, our platform will show... how this company
+performed in this quarter compared to that industry quarter average"]`
+
+Right feature. Two things in that sentence do not exist, and both have clean
+answers.
+
+### Problem 1 — there is no "industry quarterly average"
+
+**UK private companies file accounts annually, not quarterly.** There is no
+public Q1-2026 figure for UK grocery retail and there never will be. So a
+quarter-to-quarter comparison cannot be built from this data at any price.
+
+**What works instead: LTM against annual.** And this falls out for free, because
+**the covenant is already a twelve-month measure** — leverage is Net Debt /
+*LTM* EBITDA. The borrower's quarterly submission therefore already contains a
+12-month figure, and a sector annual figure is also a 12-month figure.
+
+| | Window | Comparable? |
+|---|---|---|
+| Borrower Q1-2026 submission | LTM to 31 Mar 2026 | ✅ 12 months |
+| Sector peer accounts | FY to 31 Dec 2024 | ✅ 12 months |
+
+Both are twelve-month windows, so **seasonality cancels** — any LTM period
+contains exactly one Christmas, which matters enormously in retail. This is why
+LTM-vs-annual is sound and quarter-vs-quarter would not have been even if the
+data existed.
+
+⚠️ **But label the vintage.** Those two windows end 15 months apart. The screen
+must say *"sector: FY2024, latest available"* — never imply the sector figure is
+current. Per Phase 2, a confidently-wrong comparison is worse than none.
+
+### Problem 2 — 🔴 the borrower's EBITDA and the sector's EBITDA are different metrics
+
+**This is the one that would have broken the feature silently.**
+
+The borrower's covenant EBITDA is a **negotiated, contract-specific** number
+with add-backs. The sector figure derived from filed accounts is **statutory**
+EBITDA with no add-backs. Comparing them makes every borrower look better than
+its sector, because add-backs inflate EBITDA and therefore deflate leverage.
+
+**The magnitude is not a rounding error.** `[VERIFIED 2026-10-25, S&P Global
+Ratings add-back study]`
+
+| Finding | Figure |
+|---|---|
+| Add-backs as share of management-projected EBITDA (2022 deals) | **over 29%** |
+| Add-backs as share of LTM reported EBITDA (2022 deals) | **almost 55%** |
+| Add-backs, median over the study's life | **~30%** |
+| Leverage understatement vs outcome, median (~700 M&A/LBO deals) | **2.3 turns at 1 year, 2.7 at 2 years** |
+| Companies missing their own first-year projections | **92%** |
+
+S&P's own characterisation: expanding adjusted-EBITDA definitions produce *"an
+inflation of profitability and an artificial deflation of leverage"*.
+
+The regulators agree. `[VERIFIED]` The **FSB** *Report on Vulnerabilities in
+Private Credit* (6 May 2026) states headline leverage **may be understated
+because of EBITDA adjustments**, and cites S&P's 2.2x year-one / 2.9x year-two
+under-projection for 2015–2019 deals. **IOSCO** FR03/2024 says add-backs *"may
+overstate EBITDA and thus understate debt-to-EBITDA leverage multiples"*.
+
+⚠️ Several of these figures reached us via secondary coverage (PitchBook, FSB
+citation). **Verify against the original S&P publications before putting any
+number in front of a customer.**
+
+### Therefore: compute two leverage figures, not one
+
+| Basis | EBITDA used | Compared against |
+|---|---|---|
+| **Covenant** | Agreement's definition, with add-backs | The covenant threshold |
+| **Statutory** | Accounts basis, no add-backs | The sector median |
+
+Never cross the columns. Covenant leverage belongs next to the covenant limit;
+statutory leverage belongs next to the sector. Mixing them understates the
+borrower by roughly 2+ turns, which is the difference between comfortable and
+in breach.
+
+### 🟢 And the gap between the two columns is the best signal in the product
+
+If the borrower's covenant EBITDA is 30% above its statutory EBITDA, that is
+**normal**. If it is 60% above, that is **add-back inflation** — and S&P found
+larger add-back levels *"create higher event risk and potential credit
+degradation"*.
+
+**So the comparison has a third axis nobody asked for and everybody wants:**
+
+> *"Your borrower's add-backs account for 48% of adjusted EBITDA. The S&P study
+> median is ~30%. Their reported leverage of 3.4x is 4.9x on a statutory basis,
+> against a sector median of 3.8x."*
+
+That is a finding an analyst cannot get from any spreadsheet, it works at
+**n=1**, it needs no peer pooling, and it is exactly the *"add-back inflation"*
+signal our own `../research/technical-research.md:958` flagged in August.
+
+⚠️ It also depends entirely on Phase 2 extracting the add-back list correctly —
+which is the hardest extraction target (`phase-2-extraction-spike.md` rates
+EBITDA definitions at 0.65–0.85). **This feature inherits Phase 2's accuracy
+ceiling, so the add-back list stays human-verified.**
+
 ## The constraints that shape the build
 
 **1. The REST API does not return parsed financials.** `[VERIFIED]` It returns
@@ -278,6 +378,11 @@ destroys history permanently.
 - [Financial Modeling Prep alternatives](https://developer.stockfit.io/blog/financial-modeling-prep-alternatives) and [Alpha Vantage review](https://www.findmymoat.com/tools/alpha-vantage) — commercial display/redistribution requires a separate negotiated agreement ⚠️ third-party summaries, confirm with each vendor before relying on it
 - [FTSE licence charges leave wealth managers seething](https://citywire.com/wealth-manager/news/ftse-license-charges-leave-wealth-managers-seething/a582836) — Citywire: ~£40,000 quoted to quote index values; fees scale with AUM and headcount
 - [FTSE information provider additional terms](https://www.lseg.com/content/dam/ftse-russell/en_us/documents/other/information-provider-additional-terms-march.pdf) — LSEG: index values are proprietary, no further distribution without written consent
+- [S&P study finds addbacks cloud EBITDA projections](https://pitchbook.com/news/articles/s-p-study-finds-addbacks-cloud-ebitda-projections-for-corporate-borrowers) — PitchBook on S&P: ~700 deals, 2.3/2.7 turn misses, 92% missed year one
+- [Leveraged Finance: Adding Up — EBITDA Addback Study](https://www.spglobal.com/ratings/en/research/articles/240327-leveraged-finance-adding-up-ebitda-addback-study-shows-moderate-improvement-in-earnings-projection-accuracy-13045496) — S&P Global Ratings, the primary source ⚠️ **read this before quoting any add-back figure**
+- [Report on Vulnerabilities in Private Credit](https://www.fsb.org/uploads/P060526.pdf) — FSB, 6 May 2026: headline leverage may be understated by EBITDA adjustments
+- [Leveraged Loans and CLOs: Good Practices](https://www.iosco.org/library/pubdocs/pdf/IOSCOPD766.pdf) — IOSCO FR03/2024: add-backs overstate EBITDA, understate leverage
+- `phase-2-extraction-spike.md` — the add-back extraction ceiling this feature inherits
 - `phase-1-covenant-engine.md` — bitemporal versioning, which the sector snapshot reuses
 - `phase-8-benchmarking.md` — why cross-fund pooling was killed
 - `phase-6-early-warning.md` — Companies House streaming, pairs with sector insolvency rates
