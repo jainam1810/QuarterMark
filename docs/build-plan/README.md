@@ -12,9 +12,9 @@ plan itself had never been saved — only the individual phase assessments.
 | 2 | Extraction spike 🔬 *a measurement* | ✅ Green, lower ceiling | `phase-2-extraction-spike.md` |
 | 3 | Data layer 🔒 | 🟡 Green, one silent-failure trap | `phase-3-data-layer.md` |
 | 4 | Document pipeline | 🟢 Green, three silent traps | `phase-4-document-pipeline.md` |
-| 5 | Dashboard ✨ *first demoable* | ⬜ **not checked** | — |
+| 5 | Dashboard ✨ *first demoable* | 🟢 Green, 2 constraints | `phase-5-dashboard.md` |
 | 6 | Companies House early warning 🎯 | ✅ Green | `phase-6-early-warning.md` |
-| 7 | Reporting | ⬜ **not checked, and undefined** | — |
+| 7 | Reporting | 🟢 Green, now defined | `phase-7-reporting.md` |
 | 8 | ~~Cross-fund benchmarking~~ → **Industry benchmarking** | ⚪ killed / 🟢 replaced | `phase-8-benchmarking.md`, `phase-8-industry-benchmarking.md` |
 | 9 | News monitoring *(added 2026-10-25)* | 🟡 Free sources only, no impact score | `phase-9-news-monitoring.md` |
 
@@ -65,9 +65,13 @@ director changes / insolvency notices.
 **The only feature with no competitor doing it.**
 
 ### Phase 7 — Reporting
-⚠️ **The original plan contains nothing beyond this heading.** Scope undefined.
-Likely candidates from research: LP report credit aggregates, IC packs, FCA
-FRAME loan-origination metrics. **Must be defined before it can be assessed.**
+⚠️ The original plan contained **nothing beyond this heading**. Scope has since
+been defined in `phase-7-reporting.md` from `../research/technical-research.md:1555`:
+**IC packs** and the **LP report credit section** are in; ILPA capital accounts
+are **out** (fund accounting, needs a general ledger we do not have, and
+standardised means commoditised); the FCA FRAME regulatory return waits for
+final templates, since its field definitions are covenant-monitoring primitives
+we compute anyway.
 
 ### Phase 8 — Benchmarking
 Originally *"switch on at ~30 funds"*. Cross-fund pooling is now **dead**;
@@ -101,3 +105,31 @@ ADR (1 page)  →  diagram  →  slice into tickets
 
 **Phase 3 is now carrying more than the original plan gave it.** Assess with
 these included.
+
+
+## All phases assessed as of 2026-10-25
+
+Every phase now has a feasibility document. **No phase is blocked.** The
+remaining unknowns are measurements, not questions of possibility:
+
+| Unknown | Settled by |
+|---|---|
+| Extraction accuracy on EBITDA definitions | Phase 2 spike — **the one real kill risk** |
+| Whether citations and structured output can be combined | Phase 2 spike |
+| Companies per sector with clean iXBRL figures | One-day harvest spike |
+| PDF vs Excel borrower submissions | **Ask a fund** — `../open-questions.md` Q3 |
+| Why the earlier competitor failed | **Unresolved** — `../open-questions.md` Q1 |
+
+### Requirements that landed on Phase 3 from later phases
+
+Phase 3 is the schema, and five later phases put requirements on it. Get these
+in from the start or they become migrations:
+
+| From | Requirement |
+|---|---|
+| Phase 1 | Bitemporal versioning, `btree_gist` exclusion constraint |
+| Phase 4 | Server-generated storage keys scoped per tenant (attack #7) |
+| Phase 7 | Non-accrual status, lien seniority, weighted average spread, average life, amendment history |
+| Phase 8 | Sector tag, size band, per-record pooling rights flag |
+| Phase 8 | **Frozen sector medians, stored as at the borrower's test date** |
+| Phase 8 | Shared read-only reference schema for public harvested data |
