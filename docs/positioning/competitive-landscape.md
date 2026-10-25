@@ -52,5 +52,11 @@ What "better service" means concretely — each of these must stay provable:
 
 Independent recalculation with citations is now table stakes (see `corrections-register.md` §1).
 The defensible positions are the ones requiring data or time rather than code:
-cross-fund benchmarking, the covenant pattern library, and distribution into UK/European funds
+the covenant pattern library, and distribution into UK/European funds
 before the US players arrive. This is a distribution race, not a technology race.
+
+⚠️ **Cross-fund benchmarking was listed here as a moat and has been removed.**
+Verified 2026-10-25: Allvue shipped it on 20 July 2026 with 50,000+ borrowers and
+500+ contributing customers. We would reach ~13 borrowers per sector at 5 funds.
+It is a Year-3 capability, not a differentiator. See
+`../build-plan/phase-8-benchmarking.md` and `corrections-register.md` §9.

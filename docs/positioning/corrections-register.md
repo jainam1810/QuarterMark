@@ -123,3 +123,27 @@ The README already frames this correctly: *"a smoke alarm, not a lie detector."*
 (essential for a product making breach determinations), SOC 2 (becoming table stakes —
 CovenantIQ already holds Type II), and human onboarding time per fund. Break-even at two
 customers holds only if the founder's time is free.
+
+---
+
+## 9. "Cross-fund benchmarking is a defensible moat nobody has built"
+
+**Status: `[FALSE]`** — verified 2026-10-25. Jainam caught this one.
+
+Allvue launched **Portfolio Intelligence / Nexius Intelligence** on **20 July 2026**:
+genuine cross-fund pooling, anonymised data "generated from the operational workflows
+of contributing firms", 50,000+ borrowers, 500+ customers.
+
+Two things I got wrong, in the same document:
+
+1. Called the feature **legally unresolved** while simultaneously citing Allvue's peer
+   percentiles. Self-contradictory. It is not unresolved — it is **conditional on
+   contractual rights**, and Allvue's own page publishes the condition: **~70% of their
+   data carries "contractual rights for anonymized use."** They track rights per record
+   and pool only the cleared slice.
+2. Listed it as a **moat**. The incumbent shipped it first with ~200x the data.
+
+**Say instead:** cross-fund benchmarking is legal where permission exists, requires a
+per-contribution rights flag (not fund-level opt-in), and is a Year-3 capability gated on
+customer count — roughly 30 contributing funds. Not a differentiator. See
+`../build-plan/phase-8-benchmarking.md`.
