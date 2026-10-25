@@ -62,3 +62,87 @@ version in force, source pages cited.
 ⚠️ `[VERIFIED 2026-08-04]` If row-level security is ever used: session-scoped Postgres GUCs
 **leak across tenants** under transaction-mode connection pooling unless every query uses
 `SET LOCAL` inside an explicit transaction. This is the classic serverless-Postgres footgun.
+
+## Addendum 2026-10-25 — "Should we copy Allvue's stack?"
+
+Jainam raised an AI-generated summary of Allvue's technology stack. Checked it,
+then asked the only question that matters: **does it change ours?** It does not,
+and the reason is instructive.
+
+### What the summary claimed, and what is actually verifiable
+
+| Claim | Status |
+|---|---|
+| Fund accounting built on Microsoft Dynamics | ✅ **`[VERIFIED]`** — Allvue's own pages say the fund accounting cloud architecture is built on **Dynamics NAV** (Business Central is NAV's current name) |
+| Microsoft Azure as cloud provider | 🟡 `[PLAUSIBLE]` — third-party profile, not confirmed on Allvue's own site |
+| C# / .NET as core languages | ❌ **`[UNVERIFIED]`** — **no Allvue job posting found naming C#, .NET or Azure as a requirement.** Asserted confidently by the summary with nothing behind it |
+| Snowflake for Nexius | ❌ `[UNVERIFIED]` |
+| Python for ML pipelines | ❌ `[UNVERIFIED]` |
+| RAG + vector storage for extraction | 🟡 `[PLAUSIBLE]` — consistent with their Andi assistant |
+
+**Treat AI-generated stack summaries as hypotheses.** This one mixed one
+verifiable fact with four confident assertions in identical prose.
+
+### 🔴 The decisive point: their stack exists for a job we do not do
+
+**Allvue is built on Dynamics because Allvue does fund accounting.** Their
+product needs a general ledger, partnership accounting, multi-currency, and
+automated carried-interest waterfall calculations. Building a GL from scratch
+would be irrational, so they inherited one from Microsoft's ERP platform.
+
+**QuarterMark has no general ledger, no capital accounts, no waterfalls.** We do
+covenant monitoring. **The single largest driver of Allvue's architecture does
+not apply to us at all.**
+
+Their stack is also the residue of a 2019 merger, multiple acquisitions, 500+
+enterprise clients, and buyers who demand Power BI and Snowflake integration.
+
+> **Copying an incumbent's stack means inheriting their constraints without
+> their resources.** Theirs is the output of decisions made for reasons we do
+> not share.
+
+### Where our approach is deliberately different — and better for this job
+
+The summary mentions **RAG and vector storage** for document extraction.
+`phase-2-extraction-spike.md` deliberately chose otherwise, and the reason is
+not preference:
+
+| | RAG retrieval | Our two-layer approach |
+|---|---|---|
+| Returns | Semantically similar chunks | Exact character spans joined to page geometry |
+| Provenance | Chunk-level, approximate | **Page and bounding box** |
+
+**A covenant determination must cite the clause it came from.** "Here is a
+passage that resembles your question" is not a citation. RAG is the right tool
+for a chat assistant like Andi; it is the wrong tool for a provenance chain an
+analyst has to defend to an investment committee.
+
+This is a genuine differentiator, not a gap.
+
+### Does any of it influence us?
+
+**One thing, weakly.** If the market leader is Microsoft-centric, funds' IT
+departments are already comfortable with Microsoft — a marginal point in
+Azure's favour. `0002-hosting-and-costs.md` keeps AWS-vs-Azure open until
+Phase 3 regardless, and this does not decide it.
+
+### Decision: no change
+
+TypeScript, Next.js 16.3.0, PostgreSQL stand. Reasons, in order:
+
+1. **No general ledger requirement** — the thing that forced Allvue's hand
+2. **The workload is I/O-bound**, not CPU-bound: Claude API calls and Postgres
+   queries. Language choice is not the performance lever
+3. **`decimal.js` is already verified** against the money requirement
+   (`phase-0-foundations.md`), and branded TypeScript types can carry units and
+   currency — two of the five Phase 1 commitments
+4. **A two-person team should not be polyglot**
+5. **Phase 0 work and 12 source files already exist.** Switching now discards
+   them for no capability gained
+
+⚠️ **The honest counter-argument:** C# and Java have native decimal types and a
+deeper talent pool in UK finance. If QuarterMark ever hires a team of five from
+a banking background, that is worth revisiting. **It is not worth revisiting at
+two people with a working foundation.**
+
+**Sources:** [Allvue fund accounting](https://www.allvuesystems.com/solutions/fund-accounting) (Dynamics NAV, on their own site) · Allvue job listings via Indeed and ZipRecruiter (no .NET/C# requirement found) · `phase-2-extraction-spike.md`
