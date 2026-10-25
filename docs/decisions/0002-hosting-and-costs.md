@@ -50,6 +50,16 @@ will model bitemporality explicitly rather than depend on an extension — but
 worth knowing it exists.
 
 **2. Remaining criteria for Phase 3**
+
+⚠️ **Two criteria added 2026-10-25 from `../build-plan/phase-4-document-pipeline.md`:**
+- **Enforced-constraint direct upload.** S3 presigned POST policies enforce key
+  prefix, content-type and a content-length range at the storage layer. The
+  Azure SAS equivalent is **unverified** — check before deciding, because a
+  presigned PUT cannot enforce size or type and the fallback is weaker.
+- **Malware scanning.** AWS GuardDuty Malware Protection for S3 is $0.09/GB
+  plus ~$0.215/1,000 objects. **Microsoft Defender for Storage pricing was not
+  found** — confirm it exists and what it costs.
+
 - UK data residency, and a DPA
 - SOC 2 / ISO 27001 for the fund DDQ answer
 - Managed backups with point-in-time recovery

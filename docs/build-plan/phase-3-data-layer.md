@@ -152,6 +152,7 @@ The plan named two attacks. The research adds four.
 | 4 | **Does a pooled connection carry the previous tenant's `search_path`?** | 🔴 **new** |
 | 5 | Can the audit trail be updated, deleted or truncated by any application role? | new |
 | 6 | Can a foreign key or unique constraint reveal another tenant's row exists? | new |
+| 7 | **Can a fund write an object into another fund's storage prefix?** | 🔴 `phase-4-document-pipeline.md` |
 
 **On #6** — PostgreSQL docs, verbatim:
 

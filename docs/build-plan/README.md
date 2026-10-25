@@ -11,7 +11,7 @@ plan itself had never been saved — only the individual phase assessments.
 | 1 | Covenant engine 🔴 *the moat* | ✅ Green | `phase-1-covenant-engine.md` |
 | 2 | Extraction spike 🔬 *a measurement* | ✅ Green, lower ceiling | `phase-2-extraction-spike.md` |
 | 3 | Data layer 🔒 | 🟡 Green, one silent-failure trap | `phase-3-data-layer.md` |
-| 4 | Document pipeline | ⬜ **not checked** | — |
+| 4 | Document pipeline | 🟢 Green, three silent traps | `phase-4-document-pipeline.md` |
 | 5 | Dashboard ✨ *first demoable* | ⬜ **not checked** | — |
 | 6 | Companies House early warning 🎯 | ✅ Green | `phase-6-early-warning.md` |
 | 7 | Reporting | ⬜ **not checked, and undefined** | — |
