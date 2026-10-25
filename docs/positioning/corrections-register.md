@@ -159,3 +159,35 @@ concluded in August. Keep only the cheap Phase 3 schema hooks. See
 
 **Process lesson:** this entry was written wrong twice. Both times the correct answer was
 already in `../research/`. **Check the research file before asserting a conclusion.**
+
+---
+
+## 10. "Start harvesting Companies House now or the history is lost forever"
+
+**Status: `[FALSE]`** — self-caught 2026-10-25, a few hours after asserting it repeatedly.
+
+I told Jainam three times that the Companies House accounts archive is only 12 months
+deep, that every missed month is a permanent hole, and that the harvester therefore had a
+deadline and belonged in Phase 0.
+
+**Companies House publishes a historic monthly archive back to 2008**, freely
+downloadable, at `download.companieshouse.gov.uk/historicmonthlyaccountsdata.html`. It is
+one link away from the page I had already read.
+
+**Root cause:** I took the 12-month figure from a third-party guide
+(`chguide.co.uk`) which described only the current monthly page, and did not check the
+official site for an archive before building an urgency argument on it. **A secondary
+source described a subset; I read it as the whole.**
+
+**What it changed:** the harvester was moved into Phase 0 on false urgency, and the
+"collect everything now" argument was partly built on it.
+
+**What survives:** the conclusion that we harvest broadly rather than per-sector still
+holds — but on the *other* reason, that the bulk file cannot be filtered by sector at all.
+
+**Say instead:** the archive goes back to 2008, a five-year back-fill is ~150–250 GB
+downloaded once, and the harvester has no deadline. See
+`../reference/data-sources.md` and `../build-plan/phase-8-industry-benchmarking.md`.
+
+**Process lesson, the second this week:** when a secondary source states a limit, check
+the primary site for the exception before building a recommendation on it.

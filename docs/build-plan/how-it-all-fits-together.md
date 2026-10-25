@@ -9,7 +9,7 @@ until you see it laid out.
 
 | Track | Clock | Needs a customer? |
 |---|---|---|
-| **A** — Build the sector picture | Monthly, forever | ❌ Starts before anyone signs up |
+| **A** — Build the sector picture | Monthly, ongoing | ❌ Independent of customers |
 | **B** — Set up a borrower | Once per loan | ✅ |
 | **C** — The quarterly check | Every quarter | ✅ |
 | **D** — The watch | Daily + monthly | ✅ |
@@ -18,7 +18,10 @@ until you see it laid out.
 
 ## Track A — Building the sector picture
 
-**Starts today. Runs whether or not we have a single customer.**
+**Runs whether or not we have a single customer.** `[corrected 2026-10-25]` An
+earlier version said this had to start immediately. It does not — Companies
+House keeps a downloadable archive back to 2008, so the history can be
+back-filled whenever the feature is built.
 
 ```
   every month
@@ -45,8 +48,9 @@ until you see it laid out.
   └──────────────────────────────────────────┘
 ```
 
-**Why it starts now:** Companies House keeps only 12 months. Every month we skip
-is a permanent hole. See `phase-8-industry-benchmarking.md`.
+**Two sources are needed:** the accounts files for the financials, and the
+basic company data product for the **SIC code** that maps a borrower to a
+sector. See `../reference/data-sources.md` for every link.
 
 ---
 
@@ -134,7 +138,7 @@ Neither needs the borrower to send anything. See `phase-6-early-warning.md`.
 
 | When | What happens |
 |---|---|
-| **Oct 2026** | Harvester starts. No customers yet. Sector picture begins building. |
+| **Oct 2026** | Harvester back-fills five years of the historic archive, then runs monthly. |
 | **Jan 2027** | A fund signs up. Uploads the Castle Grocers facility agreement. AI extracts 4 covenants; analyst verifies each against its source page. |
 | **Jan 2027** | Castle Grocers tagged as SIC `47110` — retail sale in non-specialised stores, food predominating. |
 | **Feb 2027** | Castle Grocers submits Q4-2026 compliance certificate. |

@@ -1,9 +1,23 @@
 # Phase 8 — Industry benchmarking (replaces cross-fund benchmarking)
 
-**Verdict: 🟢 Buildable today from free public data. One urgent action: start
-harvesting Companies House monthly bulk files now, because the archive is only
-12 months deep and cannot be recovered retroactively.**
-Checked 2026-10-25.
+**Verdict: 🟢 Buildable today from free public data. No deadline, no
+permission needed, no critical mass required.**
+Checked 2026-10-25. **Corrected 2026-10-25** — see the box below.
+
+> ⚠️ **CORRECTION, same day.** Earlier versions of this document said the
+> archive is only 12 months deep and that delay destroys history permanently,
+> and moved the harvester into Phase 0 on that basis. **That was wrong.**
+> Companies House publishes a **historic monthly archive going back to 2008**
+> at `historicmonthlyaccountsdata.html`, freely downloadable at any time.
+>
+> I asserted the urgency from a third-party guide which described only the
+> 12-month page, without checking the same site for an archive. The archive is
+> one link away on that site.
+>
+> **What changes:** the harvester has no deadline and leaves Phase 0. It can be
+> built when the feature is built.
+> **What does not change:** everything else — licensing, borrower size,
+> parsing, the two-EBITDA-bases finding.
 
 ## What this is, and what it replaced
 
@@ -341,26 +355,26 @@ At commodity object-storage rates that is **well under £1/month**, and five
 years of accumulation is roughly the price of a coffee. **Storage is not the
 constraint. It was never going to be.**
 
-### Fact 3 — 🔴 and this is decisive: the window is 12 months and the loss is permanent
+### Fact 3 — history is downloadable, so timing is not the issue — but *per-sector* fetching still fails
 
-Waiting until onboarding to start collecting a sector means **everything older
-than 12 months is already gone and cannot be bought back**.
+⚠️ **This fact replaced an incorrect one.** The original argument here was that
+the 12-month window made delay fatal. It does not: the 2008–2025 archive is
+downloadable whenever we want it.
 
-The value of a sector benchmark is the **trend** — "grocery leverage has climbed
-three years running". A standing start gives a single dot, not a line.
+The targeted approach still fails, on Fact 1 alone — **there is no way to
+request one sector.** Whether we back-fill five years today or next year, each
+monthly ZIP contains every company, and extracting "just grocery" means parsing
+the whole file regardless.
 
-⚠️ Partial mitigation: UK accounts carry **prior-year comparatives**, so one
-filing yields two data points. Twelve months of harvesting therefore gives
-roughly two years of history rather than one. Better than nothing, still not a
-trend.
-
-**And it is customer-facing.** Onboard a borrower in a sector we have never seen
-before:
+It remains customer-facing. Onboard a borrower in an unseen sector:
 
 | | Day one |
 |---|---|
-| Harvest everything | Years of sector history, immediately |
-| Harvest on demand | *"Come back next year."* |
+| Parse everything we download | Years of sector history, immediately |
+| Parse only known sectors | Re-parse 150–250 GB of archives on demand |
+
+Since the bytes are already on disk and already decompressed during parsing,
+extracting every sector costs compute once and saves re-doing it later.
 
 ### The design that honours the instinct
 
@@ -393,14 +407,19 @@ downloading the filing and parsing the iXBRL ourselves. The Document API is
 rate-limited and does not scale for bulk work. **So the bulk files are the only
 viable route, not the API.**
 
-**2. 🔴 The bulk archive is only 12 months deep — start harvesting now.**
-Monthly files cover the last 12 months. **Multi-year sector history cannot be
-bought or back-filled later from this source; it has to be accumulated.** Every
-month we do not harvest is a permanent hole in the sector trend.
+**2. History is available — back-fill it, do not accumulate it.**
+`[VERIFIED 2026-10-25]` The *current* monthly page holds only 12 months, but
+**`historicmonthlyaccountsdata.html` lists monthly archives from 2008 to 2025**
+(2008–2009 as full-year ZIPs, monthly from 2010).
 
-This is the one action in this document with a deadline attached, and it is
-cheap: a scheduled job writing ZIPs to object storage. **Do it in Phase 0, not
-Phase 8.**
+Recent months are **substantially larger than the live files suggest**:
+Dec 2016 at 1,989 MB, **Dec 2023 and Dec 2025 at 4.1 GB each**. So a five-year
+back-fill is of the order of **150–250 GB**, downloaded once.
+
+At archival-tier pricing that is still well under £1/month to store — but the
+*download and parse* is a real one-off job, not a background trickle. Plan it as
+a batch task, and note the page's own warning that large files take several
+minutes each.
 
 **3. Coverage is partial.** `[ESTIMATE, third-party]` Bulk XBRL is estimated at
 **60–75%** of filings. Paper filings are excluded entirely. One older source put
@@ -428,17 +447,19 @@ a monthly sector insolvency-rate series from the Insolvency Service.
 The honest product statement: **"your borrower vs its UK sector, from public
 filings, with the coverage and the lag shown."**
 
-## Risk rating: 🟢 Low — but with one dated action
+## Risk rating: 🟢 Low
 
-No legal blocker, no permission needed, no critical mass required, free data,
-commercial use licensed. It is an ordinary data-pipeline project.
+No legal blocker, no permission needed, no critical mass required, no deadline,
+free data, commercial use licensed. An ordinary data-pipeline project.
 
-🔴 **The only real risk is inaction:** the 12-month bulk window means delay
-destroys history permanently.
+The remaining unknowns are both measurable: **how many companies per sector
+yield clean figures**, and **whether iXBRL tagging is consistent enough** to
+compare them fairly. Settle both with the one-day spike before promising
+anything.
 
 | Action | When |
 |---|---|
-| **Start harvesting monthly bulk files to object storage** | **Phase 0 — now** |
+| Back-fill the historic archive (2008–2025, ~150–250 GB for five years) | Phase 8 — **no deadline** |
 | Parse on arrival, keep extracted figures, retain raw ZIPs 12–24 months only | Phase 0 |
 | Harvest Insolvency Service SIC tables (back to 2015, available any time) | Phase 6 |
 | Evaluate open-source iXBRL extractors before building one | Phase 8 |
