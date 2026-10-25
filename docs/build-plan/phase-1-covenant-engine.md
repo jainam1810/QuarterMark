@@ -83,13 +83,33 @@ Arithmetic uses **decimal.js** with pinned precision, hashed into every trace
 
 ## Forward dependency (not a Phase 1 blocker)
 
-Bitemporal versioning needs the Postgres **`btree_gist`** extension for an
-exclusion constraint preventing overlapping validity ranges. Supabase's own blog
-documents the exact pattern (`create extension btree_gist`, then
-`exclude using gist (id with =, validity with &&)`), but I could not find
-`btree_gist` on a definitive Supabase enabled-extensions list.
+Bitemporal versioning needs the Postgres **`btree_gist`** extension, for an
+exclusion constraint that prevents overlapping validity ranges:
 
-**Five-minute check in Phase 3.** Phase 1 touches no database.
+```sql
+create extension if not exists btree_gist;
+alter table covenant_definition_version
+  add constraint no_overlapping_validity
+  exclude using gist (covenant_id with =, validity with &&);
+```
+
+`btree_gist` is a **standard contrib extension**, not a vendor feature — but
+managed Postgres hosts each publish their own allow-list, and some restrict
+`create extension`.
+
+**This is therefore a host-selection criterion, not an afterthought:** any
+candidate that does not permit `btree_gist` is disqualified, because the
+alternative is enforcing non-overlap in application code, which is a race
+condition waiting to happen.
+
+Per the README the host is deliberately unchosen — *"UK region; portable to AWS
+or Azure"* — so this gets checked against whichever host is selected in Phase 3.
+Phase 1 touches no database.
+
+⚠️ **Repo inconsistency to resolve:** `README.md` names no database vendor,
+while `docs/decisions/0002-hosting-and-costs.md` commits to Supabase London.
+One of them is out of date. The README is the outward-facing file, so it wins
+until Jainam says otherwise.
 
 ## What Phase 1 delivers
 
@@ -100,5 +120,5 @@ pass/breach + full provenance trace out. No database, no UI, no API.
 
 - CVE-2026-40897 / CVE-2026-41139 advisories (mathjs expression parser RCE)
 - npm registry: mathjs 15.2.0 (2026-04-07), expr-eval 2.0.2 (2019-09-28)
-- Supabase blog, "Simplifying Time-Based Queries with Range Columns"
+- PostgreSQL docs: `btree_gist` contrib extension, exclusion constraints
 - `docs/research/architecture-proposals.md` — three independent designs
